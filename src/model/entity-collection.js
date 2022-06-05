@@ -69,7 +69,29 @@ export default class EntityCollection {
         if (!this.collection.has(entityType)) {
             return undefined;
         }
+        if (!keyslot || keyslot.length === 0) {
+            return this.getAllFromCollection(this.collection.get(entityType));
+        }
+
         return this._get(keyslot, this.collection.get(entityType));
+    }
+
+    getAllFromCollection(collection = this.collection, result = []) {
+        if(collection instanceof Map){
+            const entities = Array.from(collection.values());
+            entities.map(entity => {
+                if(entity instanceof Map){
+                    return this.getAllFromCollection(entity, result);
+                }else {
+                    result.push(entity);
+                    return result;
+                }
+            }); 
+            return result;
+        }else{
+            return result;
+        }
+        
     }
 
     _get(keyslot, collection) {

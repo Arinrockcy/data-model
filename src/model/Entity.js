@@ -124,6 +124,9 @@ class Entity {
         const errors = [];
         for (const key in data) {
             if (Object.hasOwnProperty.call(data, key)) {
+                if(key === 'action'){
+                    continue;
+                }
                 const fieldValue = data[key];
                 const entitySpec = this._entitySpecs.fields[key]
                 if (!Object.keys(this._entitySpecs.fields).includes(key)) {

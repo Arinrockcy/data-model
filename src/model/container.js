@@ -8,6 +8,9 @@ class DataContainer {
         this._model = model;
         this._entityCollection = new EntityCollection(model);
     }
+    get entities(){
+        return this._entityCollection.getAllFromCollection();
+    }
     addData(entityType, data) {
         if (!Object.keys(this._model._config).includes(entityType)) {
             throw new Error(`${entityType} not valid`)

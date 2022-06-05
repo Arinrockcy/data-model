@@ -23,7 +23,8 @@ try{
         firstName: 'rockcy',
         customerId: 1234,
         created: new Date('2022/10/12'),
-        orderId: '123'
+        orderId: '123',
+        action: 'I'
     })
     customer1.update({customerId: 1235});
 }catch(e){
