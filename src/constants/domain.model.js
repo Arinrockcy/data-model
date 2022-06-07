@@ -1,5 +1,39 @@
-export default  {
+export default {
     customer: {
+        metaData: {
+            primaryKeys: ['customerId'],
+            keys: [['customerId']]
+        },
+        fields: {
+            customerId: {
+                key: true,
+                dataType: 'number'
+            },
+            orderId: {
+                key: true,
+                dataType: 'string'
+            },
+            firstName: {
+                key: false,
+                dataType: 'string'
+            },
+            lastName: {
+                key: false,
+                dataType: 'string'
+            },
+            created: {
+                key: false,
+                dataType: 'date'
+            },
+            orders: {
+                key: false,
+                domain: 'order',
+                isOneToMany: true,
+                keys: [['customerId']]
+            }
+        }
+    },
+    order: {
         metaData: {
             primaryKeys: ['customerId'],
             keys: [['customerId'], ['orderId']]
@@ -7,23 +41,29 @@ export default  {
         fields: {
             customerId: {
                 key: true,
-                dataType : 'number'
+                dataType: 'number'
             },
             orderId: {
                 key: true,
-                dataType : 'string'
+                dataType: 'string'
             },
-            firstName : {
+            label: {
                 key: false,
-                dataType : 'string'
+                dataType: 'string'
             },
-            lastName : {
+            qty: {
                 key: false,
-                dataType : 'string'
+                dataType: 'number'
             },
-            created : {
+            created: {
                 key: false,
-                dataType : 'date'
+                dataType: 'date'
+            },
+            customer: {
+                key: false,
+                domain: 'customer',
+                isOneToMany: false,
+                keys: [['customerId']]
             }
         }
     }

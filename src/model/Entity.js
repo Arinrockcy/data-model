@@ -12,8 +12,19 @@ class Entity {
      */
     constructor(entityType, model) {
         this._model = model
+        this._relatedEntityMap = new Map();
         this.entityType = entityType;
         this._entitySpecs = model._config[entityType];
+        for (const fieldName in this._entitySpecs.fields) {
+            if (Object.hasOwnProperty.call(this._entitySpecs.fields, fieldName)) {
+                const entitySpec = this._entitySpecs.fields[fieldName]; 4
+                if (entitySpec.domain) {
+                    this._relatedEntityMap.set(fieldName, { reload: true, value: undefined })
+                    this.relativeEntitySetter(fieldName);
+                }
+            }
+        }
+
     }
 
     /**
@@ -37,6 +48,32 @@ class Entity {
     get ids() {
         return this._ids;
     }
+
+    relativeEntitySetter(field) {
+        const entitySpec = this._entitySpecs.fields[field];
+        const entityType = entitySpec.domain;
+        Object.defineProperty(this, field, {
+            get() {
+                const cachedEntity = this._relatedEntityMap.get(field);
+                if (cachedEntity.reload) {
+                    const keySet = this._relatedEntityKeyPair(field);
+                    const entities = this._model._dataContainer._entityCollection.get(entityType, keySet);
+                    cachedEntity.value = undefined;
+                    if (entities) {
+                        if (entitySpec.isOneToMany) {
+                            cachedEntity.value = entities;
+                        } else {
+                            cachedEntity.value = Array.isArray(entities) ? entities[0] : entities;
+                        }
+                    }
+                }
+                return cachedEntity.value;
+            },
+            enumerable: true,
+            configurable: true
+        });
+    }
+
     create(data) {
         const validationErrors = this.validate(data);
         if (validationErrors.length != 0) {
@@ -74,6 +111,7 @@ class Entity {
 
         }
     }
+
     update(data) {
         const validationErrors = this.validate(data);
         if (validationErrors.length != 0) {
@@ -124,7 +162,7 @@ class Entity {
         const errors = [];
         for (const key in data) {
             if (Object.hasOwnProperty.call(data, key)) {
-                if(key === 'action'){
+                if (key === 'action') {
                     continue;
                 }
                 const fieldValue = data[key];
@@ -151,6 +189,25 @@ class Entity {
             }
         }
         return errors;
+    }
+    /**
+     * @readonly
+     * @param {*} field entity name
+     */
+    _relatedEntityKeyPair(field) {
+        const domainSpec = this._entitySpecs.fields[field];
+        if (!domainSpec.domain) {
+            throw new Error(`${field} is not valid entityType`);
+        }
+        const keySet = [];
+        for (const key of domainSpec.keys.flat()) {
+            if (this[key]) {
+                keySet.push({
+                    [key]: this[key]
+                });
+            }
+        }
+        return keySet;
     }
 }
 export default Entity;

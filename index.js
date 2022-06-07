@@ -1,6 +1,10 @@
 import DataContainer from './src/model/container.js';
 import domainModel from './src/constants/domain.model.js';
 import EventEmitter from 'events';
+import Joi from 'joi';
+const domainSchema = {
+    
+}
 class DataModel extends EventEmitter{
     _config = {};
     _dataContainer = {};
@@ -16,16 +20,23 @@ try{
    const customer1 =  model._dataContainer.addData('customer',{
         firstName: 'arin',
         customerId: 123,
-        created: new Date('2022/10/12'),
-        orderId: '12134'
+        created: new Date('2022/10/12')
     });
-    model._dataContainer.addData('customer',{
+    const customer = model._dataContainer.addData('customer',{
         firstName: 'rockcy',
         customerId: 1234,
         created: new Date('2022/10/12'),
-        orderId: '123',
         action: 'I'
-    })
+    });
+    const order = model._dataContainer.addData('order',{
+        customerId: 1234,
+        orderId: '12345',
+        label: 'IPhone',
+        created: new Date('2022/10/12'),
+        action: 'I'
+    });
+    customer.orders;
+    order.customer
     customer1.update({customerId: 1235});
 }catch(e){
 console.log(e);

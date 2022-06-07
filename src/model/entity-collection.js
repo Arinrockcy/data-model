@@ -6,6 +6,7 @@ export default class EntityCollection {
         this.collection = new Map();
         this._model.on('Key_Updated', this.updateKeys.bind(this))
     }
+    
     updateKeys(keysToUpdate) {
         const entityType = keysToUpdate.entityType;
         if (!this.collection.has(entityType)) {
@@ -108,6 +109,10 @@ export default class EntityCollection {
             if (collection instanceof Entity) {
                 return collection
             }
+        }
+        if(collection instanceof Map)
+        {
+            return this.getAllFromCollection(collection)
         }
     }
 };
