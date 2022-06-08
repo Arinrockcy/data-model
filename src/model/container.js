@@ -1,6 +1,7 @@
 import Entity from "./Entity.js";
 import EntityCollection from './entity-collection.js'
 import getKeys from "../util/get-keys.js";
+import QueryObject from "./query-object.js";
 class DataContainer {
     _model = {}
 
@@ -8,7 +9,7 @@ class DataContainer {
         this._model = model;
         this._entityCollection = new EntityCollection(model);
     }
-    get entities(){
+    get entities() {
         return this._entityCollection.getAllFromCollection();
     }
     addData(entityType, data) {
@@ -27,7 +28,11 @@ class DataContainer {
             return existEntity;
         }
 
-        
+
+    }
+    async read(queryObjects) {
+       const queryObject =  new QueryObject(this._model, queryObjects.query);
+       console.log(queryObject)
     }
 }
 export default DataContainer;
