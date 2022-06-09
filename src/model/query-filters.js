@@ -7,7 +7,7 @@ export default class QueryFilter {
         this.columnName = filter.fieldName;
         this.columnValue = filter.value;
         this.comparator = filter.comparator;
-        
+        this.queryString = `${this.columnName}_${this.comparator}_${this.columnValue}`;
     }
     set columnName(columnName) {
         this._columnName = columnName;
@@ -17,5 +17,14 @@ export default class QueryFilter {
     }
     set comparator(comparator) {
         this._comparator = comparator;
+    }
+    get columnName() {
+        return this._columnName;
+    }
+    get columnValue() {
+        return this._columnValue;
+    }
+    get comparator() {
+        return this._comparator;
     }
 }

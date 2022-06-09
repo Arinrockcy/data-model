@@ -1,14 +1,14 @@
 import QueryFilter from "./query-filters.js";
 import QueryFilterGroup from "./query-filter-group.js";
 export default class QueryObject {
-    constructor(model, queryObject) {
+    constructor(model, queryObject, parent = undefined) {
         this._model = model;
-        this._childQueryObject = new Map();
-        this._filters = new Set();
-        this._parent = undefined;
+        this._childQueryObject = new Set();
+        this._filters = new Map();
+        this._parent = parent;
         this._fields = new Set();
         this._domainName = queryObject.domain;
-        this._add(queryObject)
+        this._add(queryObject);
     }
 
     set fields(fields) {
@@ -21,19 +21,35 @@ export default class QueryObject {
         console.log(queryObject);
         this.fields = queryObject.fields;
         this.addFilters(queryObject.filter, []);
+        this._addChildQuery(queryObject.childQuery, this);
     }
     addFilters(filters, result = []) {
         let operator = 'and';
+        let keyString = this._domainName;
         for (const filter of filters) {
             if (Array.isArray(filter)) {
-                return this.addFilters(filter, []);
+                this.addFilters(filter, []);
+                continue;
             }
             operator = filter.operator;
-            result.push(new QueryFilter(this._model, filter, this._domainName))
+            const qyeryFilter = new QueryFilter(this._model, filter, this._domainName);
+            keyString +='_' + qyeryFilter.queryString
+            result.push(qyeryFilter);
         }
-        if(result.length === 1){
-            result.push(Array.from(this._filters).pop());
+        if(result.length === 1 && this._filters.size !== 0){
+            const queryFilterGroup = Array.from(this._filters.values()).pop();
+            keyString += '_' + operator + '_' + queryFilterGroup._keyString
+            result.push(queryFilterGroup);
         }
-        this._filters.add(new QueryFilterGroup(this._model, operator, result));
+        if(result.length !==0){
+            this._filters.set(keyString, new QueryFilterGroup(this._model, operator, result, keyString));
+        }
+        
+    }
+    _addChildQuery(filters, parent){
+        for (const filter of filters) {
+            this._childQueryObject.add(new QueryObject(this._model, filter.query, parent));   
+        }
+        
     }
 }

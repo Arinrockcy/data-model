@@ -45,8 +45,8 @@ try {
     customer1.update({ customerId: 1235 });
     dataContainer.read({
         query: {
-            filter:[
-                [{
+            filter: [
+                [[{
                     fieldName: 'customerId',
                     comparator: '=',
                     value: 1235
@@ -56,10 +56,29 @@ try {
                     comparator: '=',
                     value: '12345',
                     operator: 'and'
+                }], {
+                    fieldName: 'orderId',
+                    comparator: '=',
+                    value: '12346',
+                    operator: 'or'
                 }]
             ],
             domain: 'order',
-            fields: ['orderId', 'label', 'created']
+            fields: ['orderId', 'label', 'created'],
+            childQuery: [{
+                query: {
+                    filter: [
+                        {
+                            fieldName: 'customerId',
+                            comparator: '=',
+                            value: 123
+                        }
+                    ],
+                    domain: 'order',
+                    fields: ['firstName', 'customerId', 'created'],
+                    childQuery: []
+                }
+            }]
         }
     })
 } catch (e) {
