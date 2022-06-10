@@ -1,3 +1,2 @@
 # data-model
-created to support code first methodaloy. By passing any data-model which is json structure. It process and validate and create read/write queires 
-Switching between DB will be easy. with Minimum code changes. need to change DB controller alone. 
+Created to support code first methodology. By passing JSON based data-model. It processes and validates and creates read/write queries. Switching between DB will be easy. With minimal code changes, we need to change DB controller alone.
