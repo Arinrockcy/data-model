@@ -160,13 +160,17 @@ class Entity {
 
     validate(data) {
         const errors = [];
+        const keys = [];
         for (const key in data) {
             if (Object.hasOwnProperty.call(data, key)) {
                 if (key === 'action') {
                     continue;
                 }
                 const fieldValue = data[key];
-                const entitySpec = this._entitySpecs.fields[key]
+                const entitySpec = this._entitySpecs.fields[key];
+                if (entitySpec.key) {
+                    keys.push(key);
+                }
                 if (!Object.keys(this._entitySpecs.fields).includes(key)) {
                     errors.push(`${key} not valid field for ${this._entityType}`);
                 } else if (typeof fieldValue !== 'object') {
@@ -187,6 +191,12 @@ class Entity {
                     errors.push(`${typeof fieldValue.oldvalue} not valid data type for ${key}`);
                 }
             }
+        }
+        for (const keySet of this._entitySpecs.metaData.keys) {
+            if (!keySet.filter(key => keys.includes(key))) {
+                throw new Error(`${this.entityType} missing one or more key fields ${keySet.join(', ')}`);
+                break;
+            } 
         }
         return errors;
     }
