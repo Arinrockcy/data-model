@@ -1,6 +1,7 @@
 {
   "devDependencies": {
-    "eslint": "^8.16.0"
+    "eslint": "^8.16.0",
+    "jest": "^28.1.1"
   },
   "name": "data-model",
   "version": "1.0.0",
