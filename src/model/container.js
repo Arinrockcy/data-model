@@ -3,12 +3,14 @@ import EntityCollection from './entity-collection.js'
 import getKeys from "../util/get-keys.js";
 import QueryObject from "./query-object.js";
 import Read from '../controller/read.js'
+import Write from "../controller/write.js";
 class DataContainer {
     _model = {};
     constructor(model) {
         this._model = model;
         this._entityCollection = new EntityCollection(model);
         this.readController = new Read(this._model); 
+        this.writeController = new Write(this._model);
     }
     get entities() {
         return this._entityCollection.getAllFromCollection();
@@ -31,12 +33,16 @@ class DataContainer {
 
 
     }
-    async write() {
 
+    
+    async write() {
+        return await this.writeController.write(this.entities) 
     }
+
     async read(queryObjects) {
         const queryObject = new QueryObject(this._model, queryObjects.query);
         console.log(queryObject)
+        await this.readController.Read(queryObject);
     }
 }
 export default DataContainer;
