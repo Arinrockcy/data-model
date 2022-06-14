@@ -22,11 +22,6 @@ class DataModel extends EventEmitter {
 const model = new DataModel(domainModel);
 const dataContainer = model.DataContainer
 try {
-    const customer1 = dataContainer.addData('customer', {
-        firstName: 'arin',
-        customerId: 123,
-        created: new Date('2022/10/12')
-    });
     const customer = dataContainer.addData('customer', {
         firstName: 'rockcy',
         customerId: 1234,
@@ -42,8 +37,6 @@ try {
         price: 123,
         action: 'I'
     });
-    customer.orders;
-    order.customer
     customer1.update({ customerId: 1235 });
     (async ()=> {
         const result = await dataContainer.write();
