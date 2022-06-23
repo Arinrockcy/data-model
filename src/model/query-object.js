@@ -1,5 +1,6 @@
 import QueryFilter from "./query-filters.js";
 import QueryFilterGroup from "./query-filter-group.js";
+import {v1} from 'uuid';
 export default class QueryObject {
     constructor(model, queryObject, parent = undefined) {
         this._model = model;
@@ -8,11 +9,14 @@ export default class QueryObject {
         this._parent = parent;
         this._fields = new Set();
         this._domainName = queryObject.domain;
+        this._queryObjectId = v1();
         this._add(queryObject);
     }
-
+    get fields() {
+        return Array.from(this._fields.values());
+    }
     set fields(fields) {
-        this._fields = new Set([...fields])
+        this._fields = new Set([...fields, ...this._model._config[this._domainName].metaData.keys.flat()])
     }
     set parent(parent) {
         this._parent = parent;
