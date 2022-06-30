@@ -48,11 +48,17 @@ try {
                     {
                         fieldName: 'customerId',
                         comparator: '=',
-                        value: 1235
+                        value: 1234
+                    },
+                    {
+                        fieldName: 'orderId',
+                        comparator: '=',
+                        value: '12345',
+                        operator: 'and'
                     }
                 ],
                 domain: 'order',
-                fields: ['orderId', 'label', 'created', 'quantity'],
+                fields: ['quantity', 'orderId', 'label', 'created', 'quantity'],
                 childQuery: []
             }
         });

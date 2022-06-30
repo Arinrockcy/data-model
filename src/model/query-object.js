@@ -16,7 +16,7 @@ export default class QueryObject {
         return Array.from(this._fields.values());
     }
     set fields(fields) {
-        this._fields = new Set([...fields, ...this._model._config[this._domainName].metaData.keys.flat()])
+        this._fields = new Set([...this._model._config[this._domainName].metaData.keys.flat(), ...fields])
     }
     set parent(parent) {
         this._parent = parent;

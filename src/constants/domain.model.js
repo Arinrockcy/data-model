@@ -86,13 +86,13 @@ export default {
                     }
                 ]
             },
-            orderDetailsinsertedId: {
+            orderdetailsinsertedId: {
                 key: false,
-                path: 'orderDetailsinsertedId',
+                path: 'orderdetailsinsertedId',
                 dataType: 'string',
                 table: [
                     {
-                        tableId: 'orderDetails',
+                        tableId: 'orderdetails',
                         columnName : '_id'
                     }
                 ]
@@ -118,7 +118,7 @@ export default {
                         columnName : 'orderId'
                     },
                     {
-                        tableId: 'orderDetails',
+                        tableId: 'orderdetails',
                         columnName : 'orderId'
                     }
                 ]
@@ -140,7 +140,7 @@ export default {
                 path: 'quantity',
                 table: [
                     {
-                        tableId: 'orderDetails',
+                        tableId: 'orderdetails',
                         columnName : 'quantity'
                     }
                 ]
@@ -151,7 +151,7 @@ export default {
                 dataType: 'number',
                 table: [
                     {
-                        tableId: 'orderDetails',
+                        tableId: 'orderdetails',
                         columnName : 'price'
                     }
                 ]
@@ -162,7 +162,7 @@ export default {
                 dataType: 'date',
                 table: [
                     {
-                        tableId: 'orderDetails',
+                        tableId: 'orderdetails',
                         columnName : 'created'
                     },
                     {
@@ -177,7 +177,7 @@ export default {
                 path: 'status',
                 table: [
                     {
-                        tableId: 'orderDetails',
+                        tableId: 'orderdetails',
                         columnName : 'status'
                     },
                     {
