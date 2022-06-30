@@ -11,10 +11,12 @@ class DataContainer {
         this._entityCollection = new EntityCollection(model);
         this.readController = new Read(this._model); 
         this.writeController = new Write(this._model);
+        this._model.on('readData', this.afterRead.bind(this));
     }
     get entities() {
         return this._entityCollection.getAllFromCollection();
     }
+
     addData(entityType, data) {
         if (!Object.keys(this._model._config).includes(entityType)) {
             throw new Error(`${entityType} not valid`);
@@ -34,14 +36,40 @@ class DataContainer {
 
     }
 
-    
+    afterRead({_data, _queryObject}) {
+        const entitySpec = this._model._config[_queryObject._domainName];
+        const _payload = {};
+        _data = _data[0];
+        for (const field of _queryObject.fields) {
+            if(!Object.keys(entitySpec.fields).includes(field)) {
+                continue;
+            }
+            if(Object.keys(_data).includes(field)) {
+                _payload[field] = _data[field];
+                continue;
+            }
+            const tableSpec = entitySpec.fields[field].table;
+
+            for (const { tableId } of tableSpec) {
+                if(!Object.keys(_data).includes(tableId)) {
+                    continue;
+                }
+                if (Object.keys(_data[tableId][0]).includes(field)) {
+                    _payload[field] = _data[tableId][0][field];
+                    continue;
+                }
+            }
+
+        }
+        this.addData(_queryObject._domainName, _payload)
+    }
+
     async write() {
         return await this.writeController.write(this.entities) 
     }
 
     async read(queryObjects) {
         const queryObject = new QueryObject(this._model, queryObjects.query);
-        console.log(queryObject)
         await this.readController.Read(queryObject);
     }
 }

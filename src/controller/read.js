@@ -142,7 +142,10 @@ export default class Read {
         const [[, baseModel], ...models] = modelObjects;
         const query = this.buildQuery(baseModel, models);
         const result = await this.runQuery(query, baseModel, models);
-        console.log(query)
+        this._model.emit('readData', {
+            _data: result,
+             _queryObject:queryObject 
+        });
     }
 
     async runQuery(query, baseModel, models) {
@@ -152,8 +155,7 @@ export default class Read {
         }
         const _model = this._DB.model(baseModel._modelName, new mongoose.Schema(baseModel._schema));
         try {
-            const result = await _model.aggregate(query).exec();
-            return result;    
+            return await _model.aggregate(query).exec();
         } catch (error) {
             console.log(error)
         }

@@ -62,6 +62,7 @@ try {
                 childQuery: []
             }
         });
+        console.log(dataContainer)
     })();
     
 } catch (e) {
