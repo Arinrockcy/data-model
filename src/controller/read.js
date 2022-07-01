@@ -143,7 +143,7 @@ export default class Read {
         const query = this.buildQuery(baseModel, models);
         const result = await this.runQuery(query, baseModel, models);
         this._model.emit('readData', {
-            _data: result,
+            records: result,
              _queryObject:queryObject 
         });
     }

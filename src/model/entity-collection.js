@@ -54,7 +54,9 @@ export default class EntityCollection {
                     collection.set(field, new Map())
                 }
                 collection = collection.get(field);
-                collection.set(entity[field], new Map())
+                if (!collection.has(entity[field])) {
+                    collection.set(entity[field], new Map())
+                }
                 oldField = entity[field] ? entity[field] : field;
             }
         } else {

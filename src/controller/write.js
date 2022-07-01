@@ -71,7 +71,7 @@ export default class Write {
         const _model = this._DB.model(payload._modelName, new mongoose.Schema(payload._schema));
         const result = await new _model(payload._data).save();
         this.afterSave(result, payload.entity, payload._modelName)
-        return this.writes(_payload);
+        return await this.writes(_payload);
     }
     async write(entities) {
         const _payload = this.processData(entities);

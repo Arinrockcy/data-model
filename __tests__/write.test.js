@@ -9,30 +9,18 @@ describe('Write test case', () => {
         dataContainer = model.DataContainer
     });
     test('order creation', async () => {
-        dataContainer.addData('customer', {
-            firstName: 'rockcy',
-            customerId: 1234,
-            created: new Date('2022/10/12'),
-            action: 'I'
-        });
         dataContainer.addData('order', {
             customerId: 1234,
-            orderId: '12345',
+            orderId: '12347',
             label: 'IPhone',
             created: new Date('2022/10/12'),
             quantity: 1,
             price: 123,
             action: 'I'
         });
-        expect(dataContainer.entities).toHaveLength(2);
-        expect(customer).not.toHaveProperty('insertedId')
+        expect(dataContainer.entities).toHaveLength(1);
         await dataContainer.write();
-        const customer = dataContainer._entityCollection.get('customer')[0];
+        const customer = dataContainer._entityCollection.get('order')[0];
         expect(customer).toHaveProperty('insertedId')
-    });
-    afterAll(async (done) => {
-        console.log(dataContainer.entities);
-        await mongoose.connection.close();
-        done()
     });
 });

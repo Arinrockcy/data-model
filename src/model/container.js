@@ -36,32 +36,33 @@ class DataContainer {
 
     }
 
-    afterRead({_data, _queryObject}) {
+    afterRead({ records, _queryObject }) {
         const entitySpec = this._model._config[_queryObject._domainName];
         const _payload = {};
-        _data = _data[0];
-        for (const field of _queryObject.fields) {
-            if(!Object.keys(entitySpec.fields).includes(field)) {
-                continue;
-            }
-            if(Object.keys(_data).includes(field)) {
-                _payload[field] = _data[field];
-                continue;
-            }
-            const tableSpec = entitySpec.fields[field].table;
-
-            for (const { tableId } of tableSpec) {
-                if(!Object.keys(_data).includes(tableId)) {
+        for (const _data of records) {
+            for (const field of _queryObject.fields) {
+                if (!Object.keys(entitySpec.fields).includes(field)) {
                     continue;
                 }
-                if (Object.keys(_data[tableId][0]).includes(field)) {
-                    _payload[field] = _data[tableId][0][field];
+                if (Object.keys(_data).includes(field)) {
+                    _payload[field] = _data[field];
                     continue;
                 }
-            }
+                const tableSpec = entitySpec.fields[field].table;
 
+                for (const { tableId } of tableSpec) {
+                    if (!Object.keys(_data).includes(tableId)) {
+                        continue;
+                    }
+                    if (Object.keys(_data[tableId][0]).includes(field)) {
+                        _payload[field] = _data[tableId][0][field];
+                        continue;
+                    }
+                }
+
+            }
+            this.addData(_queryObject._domainName, _payload);
         }
-        this.addData(_queryObject._domainName, _payload)
     }
 
     async write() {

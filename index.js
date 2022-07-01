@@ -5,7 +5,7 @@ import Joi from 'joi';
 const domainSchema = {
 
 }
-class DataModel extends EventEmitter {
+export default class DataModel extends EventEmitter {
     _config = {};
     _dataContainer = {};
     constructor(config) {
@@ -37,10 +37,10 @@ try {
     //     price: 123,
     //     action: 'I'
     // });
-    // (async ()=> {
-    //     const result = await dataContainer.write();
-    //     console.log(result);
-    // })();
+    (async ()=> {
+        const result = await dataContainer.write();
+        console.log(result);
+    })();
     (async () => {
         await dataContainer.read({
             query: {
@@ -49,12 +49,6 @@ try {
                         fieldName: 'customerId',
                         comparator: '=',
                         value: 1234
-                    },
-                    {
-                        fieldName: 'orderId',
-                        comparator: '=',
-                        value: '12345',
-                        operator: 'and'
                     }
                 ],
                 domain: 'order',
