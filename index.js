@@ -62,7 +62,9 @@ try {
                 childQuery: []
             }
         });
-        console.log(dataContainer)
+        const order = dataContainer._entityCollection.get('order')[0];
+        const json = order.toJSON();
+        console.log(json);
     })();
     
 } catch (e) {

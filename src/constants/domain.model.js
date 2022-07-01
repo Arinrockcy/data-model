@@ -88,7 +88,7 @@ export default {
             },
             orderdetailsinsertedId: {
                 key: false,
-                path: 'orderdetailsinsertedId',
+                path: 'orderdetails.orderdetailsinsertedId',
                 dataType: 'string',
                 table: [
                     {
@@ -137,7 +137,7 @@ export default {
             quantity: {
                 key: false,
                 dataType: 'number',
-                path: 'quantity',
+                path: 'orderdetails.quantity',
                 table: [
                     {
                         tableId: 'orderdetails',
@@ -147,7 +147,7 @@ export default {
             },
             price:{
                 key: false,
-                path: 'price',
+                path: 'orderdetails.price',
                 dataType: 'number',
                 table: [
                     {
