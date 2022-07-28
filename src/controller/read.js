@@ -15,9 +15,8 @@ export default class Read {
         }
         return dataTypeMap.get(dataType);
     }
-    getModelBasedOnFields(fields, domainName) {
+    getModelBasedOnFields(fields, domainName, _query = new Map()) {
         const domainSpecs = this._model._config[domainName];
-        const _query = new Map();
         for (const field of fields) {
             const { key, table, dataType } = domainSpecs.fields[field];
             const datatype = this.getDataType(dataType);
@@ -50,13 +49,26 @@ export default class Read {
         }
         return _query;
     }
+    lookUpKeysOnOtherModel(baseModel, model) {
+        let found = model._keys.find(key => baseModel[1]._keys.includes(key));
+        
+        model._lookup.localField = found;
+        model._lookup.foreignField = baseModel[1]._modelName+'.'+found;
+    }
 
     identifyJoinKey(baseModelKyes, models) {
+        let index = 0;
         for (const modelObject of models) {
             const [, model] = modelObject;
-            const found = model._keys.find(key => baseModelKyes.includes(key));
-            model._lookup.localField = found;
-            model._lookup.foreignField = found;
+            let found = model._keys.find(key => baseModelKyes.includes(key));
+            if (!found) {
+                this.lookUpKeysOnOtherModel(models[index-1], model);
+            } else {
+                model._lookup.localField = found;
+                model._lookup.foreignField = found;
+            }
+            
+            index++;
         }
     }
 
@@ -68,7 +80,7 @@ export default class Read {
         this.processFilters(_queryFilters, _operator, queryObjectsByFileds, seenIds);
     }
 
-    processConditions(conditions, condition, operator, alais) {
+    processConditions(conditions, condition, operator = 'and', alais) {
         const columnName = alais ? alais + '.' + condition.columnName : condition.columnName;
         if (Object.keys(conditions).length === 0) {
             conditions = { [columnName]: condition.columnValue };
@@ -117,9 +129,28 @@ export default class Read {
         return query;
     }
 
-    processQueryObject(queryObject) {
+    getFilters(queryObject){
+
+    }
+
+    getQueryObjectsByFields(queryObject){
         const queryObjectsByFileds = this.getModelBasedOnFields(queryObject.fields, queryObject._domainName);
+        for (const childQueryObject of [...queryObject._childQueryObject.values()]) {
+            this.getModelBasedOnFields(childQueryObject.fields, childQueryObject._domainName, queryObjectsByFileds);
+        }
+        return queryObjectsByFileds;
+    }
+
+    getAllFields(queryObject){
         const filters = [...queryObject._filters.values()];
+        for (const childQueryObject of [...queryObject._childQueryObject.values()]) {
+            filters.push(...childQueryObject._filters.values())
+        }
+        return filters;
+    }
+    processQueryObject(queryObject) {
+        const queryObjectsByFileds = this.getQueryObjectsByFields(queryObject);
+        const filters = this.getAllFields(queryObject);
         const [[, baseModel], ...models] = queryObjectsByFileds;
         baseModel._baseModel = true;
         this.identifyJoinKey(baseModel._keys, models);
@@ -146,6 +177,7 @@ export default class Read {
             records: result,
              _queryObject:queryObject 
         });
+        return result;
     }
 
     async runQuery(query, baseModel, models) {

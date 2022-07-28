@@ -18,9 +18,9 @@ export default class DataModel extends EventEmitter {
         return this._dataContainer;
     }
 }
-
-const model = new DataModel(domainModel);
-const dataContainer = model.DataContainer
+//
+// const model = new DataModel(domainModel);
+// const dataContainer = model.DataContainer
 try {
     // const customer = dataContainer.addData('customer', {
     //     firstName: 'rockcy',

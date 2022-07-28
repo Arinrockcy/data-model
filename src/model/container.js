@@ -71,7 +71,7 @@ class DataContainer {
 
     async read(queryObjects) {
         const queryObject = new QueryObject(this._model, queryObjects.query);
-        await this.readController.Read(queryObject);
+        return await this.readController.Read(queryObject);
     }
 }
 export default DataContainer;
