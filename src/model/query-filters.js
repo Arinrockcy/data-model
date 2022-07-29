@@ -32,9 +32,9 @@ export default class QueryFilter {
                 throw new Error(`${dataType} is not valid dataType for field ${this.columnName}`);
             }
         } else
-        if (dataType != filedSpec.dataType) {
-            throw new Error(`${dataType} is not valid dataType for field ${this.columnName}`);
-        }
+            if (dataType != filedSpec.dataType) {
+                throw new Error(`${dataType} is not valid dataType for field ${this.columnName}`);
+            }
 
         /**
          * @readonly
@@ -47,19 +47,28 @@ export default class QueryFilter {
         if (comparatorMap.includes('array') && !Array.isArray(this.columnValue)) {
             throw new Error(`${filter.comparator} is not valid comparator for the type ${dataType}`);
         } else
-        if (!comparatorMap.includes(dataType)) {
-            throw new Error(`${filter.comparator} is not valid comparator for the type ${dataType}`);
-        }
-        
+            if (!comparatorMap.includes(dataType)) {
+                throw new Error(`${filter.comparator} is not valid comparator for the type ${dataType}`);
+            }
+
         /**
          * @readonly
          */
         this.comparator = filter.comparator;
-        
+
         /**
          * @readonly
          */
         this.queryString = `${this.columnName}_${this.comparator}_${this.columnValue}`;
+
+        /**
+         * @readonly
+         */
+        this._tables = new Map(Array.from(filedSpec.table.map(table => Object.values(table))));
+        /**
+         * @readonly
+         */
+        this._tableNames = Array.from(this._tables.keys());
     }
     set columnName(columnName) {
         this._columnName = columnName;
@@ -78,5 +87,19 @@ export default class QueryFilter {
     }
     get comparator() {
         return this._comparator;
+    }
+
+    get tableNames() {
+        return this._tableNames;
+    }
+
+    getTableById(id) {
+        if (this._tables.has(id)) {
+            return this._tables.get(id);
+        }
+    }
+
+    get primaryTable() {
+        return this._tableNames[0];
     }
 }

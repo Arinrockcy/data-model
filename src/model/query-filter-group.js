@@ -19,6 +19,12 @@ export default class QueryFilterGroup {
 
     }
     get queryFilters() {
-        return this._queryFilters;
+        return [...this._queryFilters.values()];
+    }
+    get id() {
+        this._keyString;
+    }
+    get operator() {
+        return this._operator;
     }
 }

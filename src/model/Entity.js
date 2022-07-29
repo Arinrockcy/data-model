@@ -219,5 +219,37 @@ class Entity {
         }
         return keySet;
     }
+
+    isObject(value) {
+        return typeof value === 'object' && false === value instanceof Date && value !== null;
+    }
+    toJSON() {
+        const json = {};
+        for (const field of Object.keys(this.entitySpecs.fields)) {
+            if(!this[field]) {
+                continue;
+            }
+            const fieldSpec = this.entitySpecs.fields[field];
+            const fieldValue = this.isObject(this[field]) && fieldSpec.dataType !='object'? this[field].value: this[field]
+            if (!fieldSpec.domain) {
+                const paths = fieldSpec.path.split('.');
+                let data = json;
+                let iterations = paths.length;
+                for (const path of paths) {
+                    const isLast = !--iterations;
+                    if (data.hasOwnProperty(path)) {
+                        data = data[path];
+                    } else {
+                        data[path] = isLast ? fieldValue : {};
+                        data = data[path];
+                        if(isLast) {
+                            data = json;
+                        }
+                    }
+                }
+            }
+        }
+        return json;
+    }
 }
 export default Entity;
