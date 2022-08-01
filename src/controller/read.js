@@ -7,7 +7,7 @@ import { dataTypeMap } from "../db/config.js";
 export default class Read {
     constructor(model) {
         this._model = model;
-        this._DB = DB();
+        this._DB = DB(this._model._dbConfig);
     }
     getDataType(dataType) {
         if (!dataTypeMap.has(dataType)) {

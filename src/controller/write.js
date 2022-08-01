@@ -7,7 +7,7 @@ export default class Write {
         this.init()
     }
     init() {
-        this._DB = DB();
+        this._DB = DB(this._model._dbConfig);
     }
     getDataType(dataType) {
         if (!dataTypeMap.has(dataType)) {
