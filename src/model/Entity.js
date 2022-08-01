@@ -181,6 +181,9 @@ class Entity {
                     if (fieldValue instanceof Date && entitySpec.dataType !== 'date') {
                         errors.push(`${typeof fieldValue} not valid data type for ${key}`);
                     }
+                    if (Array.isArray(fieldValue) && entitySpec.dataType !== 'array') {
+                        errors.push(`${typeof fieldValue} not valid data type for ${key}`);
+                    }
                     if (fieldValue.value && (typeof fieldValue.value === entitySpec.dataType)) {
                         errors.push(`${typeof fieldValue.value} not valid data type for ${key}`);
                     }
