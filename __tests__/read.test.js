@@ -21,18 +21,6 @@ describe('Read Test Case', () => {
                 domain: 'customer',
                 fields: ['customerId', 'firstName', 'lastName', 'created'],
                 childQuery: [
-                    {
-                    filter: [
-                        {
-                            fieldName: 'orderId',
-                            comparator: '=',
-                            value: '12347'
-                        }
-                    ],
-                    domain: 'customer',
-                    fields: ['label', 'quantity', 'price', 'status'],
-                    childQuery: []
-                }
             ]
             }
         });

@@ -11,11 +11,21 @@ export default class DataModel extends EventEmitter {
     constructor(config) {
         super();
         this._config = config;
+        this._domainFields = config.domainModel;
+        this._dbConfig = config.dbConfig
         this._dataContainer = new DataContainer(this);
     }
 
     get DataContainer() {
         return this._dataContainer;
+    }
+
+    get DomainFields() {
+        return this._domainFields
+    }
+
+    get sampleDominModel() {
+        return domainModel;
     }
 }
 //
