@@ -168,6 +168,9 @@ class Entity {
                 }
                 const fieldValue = data[key];
                 const entitySpec = this._entitySpecs.fields[key];
+                if (!entitySpec) {
+                    continue;
+                }
                 if (entitySpec.key) {
                     keys.push(key);
                 }
