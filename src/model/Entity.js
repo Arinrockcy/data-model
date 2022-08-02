@@ -242,7 +242,7 @@ class Entity {
                 continue;
             }
             const fieldSpec = this.entitySpecs.fields[field];
-            const fieldValue = this.isObject(this[field]) && fieldSpec.dataType !='object'? this[field].value: this[field]
+            const fieldValue = this.isObject(this[field]) && fieldSpec.dataType !='object' && fieldSpec.dataType !='array'? this[field].value: this[field]
             if (!fieldSpec.domain) {
                 const paths = fieldSpec.path.split('.');
                 let data = json;
