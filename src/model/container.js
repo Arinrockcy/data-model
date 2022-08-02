@@ -30,6 +30,7 @@ class DataContainer {
             return entity;
         } else {
             existEntity.update(data);
+            this._entityCollection.add(existEntity);
             return existEntity;
         }
 
