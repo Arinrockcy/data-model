@@ -183,9 +183,12 @@ export default class Read {
     async runQuery(query, baseModel, models) {
         for (const modelObject of models) {
             const [, model] = modelObject;
-            this._DB.model(model._modelName, new mongoose.Schema(model._schema));
+            if (!mongoose.models[_modelName]) {
+                this._DB.model(model._modelName, new mongoose.Schema(model._schema));
+            }
+            
         }
-        const _model = this._DB.model(baseModel._modelName, new mongoose.Schema(baseModel._schema));
+        const _model = mongoose.models[_modelName] || this._DB.model(baseModel._modelName, new mongoose.Schema(baseModel._schema));
         try {
             return await _model.aggregate(query).exec();
         } catch (error) {
