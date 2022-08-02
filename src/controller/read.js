@@ -4,6 +4,7 @@ import QueryFilter from '../model/query-filters.js';
 import { DB } from '../db/connect.js';
 import mongoose from 'mongoose';
 import { dataTypeMap } from "../db/config.js";
+import removeModels from '../util/remove-models.js';
 export default class Read {
     constructor(model) {
         this._model = model;
@@ -177,18 +178,19 @@ export default class Read {
             records: result,
              _queryObject:queryObject 
         });
+        removeModels();
         return result;
     }
 
     async runQuery(query, baseModel, models) {
         for (const modelObject of models) {
             const [, model] = modelObject;
-            if (!mongoose.models[_modelName]) {
+            if (!mongoose.models[model._modelName]) {
                 this._DB.model(model._modelName, new mongoose.Schema(model._schema));
             }
             
         }
-        const _model = mongoose.models[_modelName] || this._DB.model(baseModel._modelName, new mongoose.Schema(baseModel._schema));
+        const _model = mongoose.models[baseModel._modelName] || this._DB.model(baseModel._modelName, new mongoose.Schema(baseModel._schema));
         try {
             return await _model.aggregate(query).exec();
         } catch (error) {
