@@ -142,7 +142,7 @@ class Entity {
                     }
                     this[key] = current;
                     this._ids[key] = current;
-
+                    
                 }
                 else if (entitySpec.dataType === 'date') {
                     const value = typeof current === 'object' && !current instanceof Date ? current.value : current;
@@ -153,6 +153,9 @@ class Entity {
                     const value = typeof current === 'object' ? current.value : current;
                     const oldvalue = typeof current === 'object' ? current.oldvalue : undefined;
                     this[key] = new Objetcs(value, oldvalue);
+                }
+                else if (entitySpec.dataType === 'array' && Array.isArray(current)) {
+                    this[key] = current;
                 } else {
                     const value = typeof current === 'object' ? current.value : current;
                     const oldvalue = typeof current === 'object' ? current.oldvalue : undefined;
