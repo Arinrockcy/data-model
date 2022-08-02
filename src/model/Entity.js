@@ -105,7 +105,7 @@ class Entity {
                     const oldvalue = typeof current === 'object' ? current.oldvalue : undefined;
                     this[key] = new Objetcs(value, oldvalue);
                 }
-                else if (entitySpec.dataType === 'array' && Array.isArray(value)) {
+                else if (entitySpec.dataType === 'array' && Array.isArray(current)) {
                     this[key] = current;
                 } else {
                     const value = typeof current === 'object' ? current.value : current;
