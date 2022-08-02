@@ -1,6 +1,7 @@
 import { dataTypeMap } from "../db/config.js";
 import { DB } from '../db/connect.js';
 import mongoose from 'mongoose';
+import removeModels from "../util/remove-models.js";
 export default class Write {
     constructor(model) {
         this._model = model;
@@ -65,10 +66,11 @@ export default class Write {
     }
     async writes(_payload) {
         if (_payload.length === 0) {
+            removeModels();
             return 0
         }
         const payload = _payload.pop();
-        const _model = mongoose.models[_modelName] || this._DB.model(payload._modelName, new mongoose.Schema(payload._schema));
+        const _model = mongoose.models[baseModel._modelName] || this._DB.model(payload._modelName, new mongoose.Schema(payload._schema));
         const result = await new _model(payload._data).save();
         this.afterSave(result, payload.entity, payload._modelName)
         return await this.writes(_payload);
