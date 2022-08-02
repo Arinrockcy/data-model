@@ -12,7 +12,8 @@ export default class DataModel extends EventEmitter {
         super();
         this._config = config;
         this._domainFields = config.domainModel;
-        this._dbConfig = config.dbConfig
+        this._dbConfig = config.dbConfig;
+        this._config = this._domainFields;
         this._dataContainer = new DataContainer(this);
     }
 
