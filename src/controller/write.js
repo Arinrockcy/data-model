@@ -68,7 +68,7 @@ export default class Write {
             return 0
         }
         const payload = _payload.pop();
-        const _model = this._DB.model(payload._modelName, new mongoose.Schema(payload._schema));
+        const _model = mongoose.models[_modelName] || this._DB.model(payload._modelName, new mongoose.Schema(payload._schema));
         const result = await new _model(payload._data).save();
         this.afterSave(result, payload.entity, payload._modelName)
         return await this.writes(_payload);
