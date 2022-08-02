@@ -31,7 +31,8 @@ const {
       ["number", Number],
       ["date", Date],
       ["object", Object],
-      ["boolean", Boolean]
+      ["boolean", Boolean],
+      ["array", Array]
     ]
     );
   
