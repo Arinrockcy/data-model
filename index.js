@@ -1,6 +1,7 @@
 import DataContainer from './src/model/container.js';
 import domainModel from './src/constants/domain.model.js';
 import EventEmitter from 'events';
+import getKeys from './src/util/get-keys.js';
 import Joi from 'joi';
 const domainSchema = {
 
@@ -27,6 +28,9 @@ export default class DataModel extends EventEmitter {
 
     get sampleDominModel() {
         return domainModel;
+    }
+    get keys() {
+        return getKeys;
     }
 }
 //
