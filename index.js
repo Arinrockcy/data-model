@@ -33,49 +33,51 @@ export default class DataModel extends EventEmitter {
         return getKeys;
     }
 }
-//
-// const model = new DataModel(domainModel);
+
+// const model = new DataModel({
+//     domainModel: domainModel,
+//     dbConfig: 'mongodb+srv://data_model:data_model@cluster0.24asb.mongodb.net/data_model?retryWrites=true&w=majority'
+// });
 // const dataContainer = model.DataContainer
 // try {
-//     // const customer = dataContainer.addData('customer', {
-//     //     firstName: 'rockcy',
-//     //     customerId: 1234,
-//     //     created: new Date('2022/10/12'),
-//     //     action: 'I'
-//     // });
-//     // const order = dataContainer.addData('order', {
-//     //     customerId: 1234,
-//     //     orderId: '12345',
-//     //     label: 'IPhone',
-//     //     created: new Date('2022/10/12'),
-//     //     quantity: 1,
-//     //     price: 123,
-//     //     action: 'I'
-//     // });
-//     // (async ()=> {
-//     //     const result = await dataContainer.write();
-//     //     console.log(result);
-//     // })();
-//     // (async () => {
-//     //     await dataContainer.read({
-//     //         query: {
-//     //             filter: [
-//     //                 {
-//     //                     fieldName: 'customerId',
-//     //                     comparator: '=',
-//     //                     value: 1234
-//     //                 }
-//     //             ],
-//     //             domain: 'order',
-//     //             fields: ['quantity', 'orderId', 'label', 'created', 'quantity'],
-//     //             childQuery: []
-//     //         }
-//     //     });
-//     //     const order = dataContainer._entityCollection.get('order')[0];
-//     //     const json = order.toJSON();
-//     //     console.log(json);
-//     // })();
-//     //
+    // const customer = dataContainer.addData('customer', {
+    //     firstName: 'rockcy',
+    //     customerId: 1234567,
+    //     created: new Date('2022/10/12'),
+    //     action: 'I'
+    // });
+    // const order = dataContainer.addData('order', {
+    //     customerId: 1234567,
+    //     orderId: '12345678',
+    //     label: 'IPhone',
+    //     quantity: 1,
+    //     price: 123,
+    //     action: 'I'
+    // });
+    // (async ()=> {
+    //     const result = await dataContainer.write();
+    //     console.log(result);
+    // })();
+//     (async () => {
+//         await dataContainer.read({
+//             query: {
+//                 filter: [
+//                     {
+//                         fieldName: 'customerId',
+//                         comparator: '=',
+//                         value: 1234567
+//                     }
+//                 ],
+//                 domain: 'customer',
+//                 fields: [ 'firstName', 'orders', 'lastName'],
+//                 childQuery: []
+//             }
+//         });
+//         const order = dataContainer._entityCollection.get('customer')[0];
+//         const json = order.toJSON();
+//         console.log(json);
+//     })();
+    
 // } catch (e) {
 //     console.log(e);
 // }

@@ -142,7 +142,7 @@ class Entity {
                     }
                     this[key] = current;
                     this._ids[key] = current;
-                    
+
                 }
                 else if (entitySpec.dataType === 'date') {
                     const value = typeof current === 'object' && !current instanceof Date ? current.value : current;
@@ -211,7 +211,7 @@ class Entity {
             if (!keySet.filter(key => keys.includes(key))) {
                 throw new Error(`${this.entityType} missing one or more key fields ${keySet.join(', ')}`);
                 break;
-            } 
+            }
         }
         return errors;
     }
@@ -238,14 +238,17 @@ class Entity {
     isObject(value) {
         return typeof value === 'object' && false === value instanceof Date && value !== null;
     }
-    toJSON() {
-        const json = {};
-        for (const field of Object.keys(this.entitySpecs.fields)) {
-            if(!this[field]) {
+    recursiveJSON(json, spec, dataObject, seen) {
+        if(seen.has(dataObject)){
+            return;
+        }
+        seen.add(dataObject)
+        for (const field of Object.keys(spec.fields)) {
+            if (!dataObject[field]) {
                 continue;
             }
-            const fieldSpec = this.entitySpecs.fields[field];
-            const fieldValue = this.isObject(this[field]) && fieldSpec.dataType !='object' && fieldSpec.dataType !='array'? this[field].value: this[field]
+            const fieldSpec = spec.fields[field];
+            const fieldValue = this.isObject(dataObject[field]) && fieldSpec.dataType != 'object' && fieldSpec.dataType != 'array' ? dataObject[field].value : dataObject[field]
             if (!fieldSpec.domain) {
                 const paths = fieldSpec.path.split('.');
                 let data = json;
@@ -257,13 +260,33 @@ class Entity {
                     } else {
                         data[path] = isLast ? fieldValue : {};
                         data = data[path];
-                        if(isLast) {
+                        if (isLast) {
                             data = json;
                         }
                     }
                 }
+            } else if (dataObject[field]) {
+                const relatedNode = Array.isArray(dataObject[field]) ? dataObject[field] : [dataObject[field]];
+                for (const node of relatedNode) {
+                    let datapoint = {};
+                    if (fieldSpec.isOneToMany) {
+                        json[field] ? json[field].push({}) : json[field] = [{}];
+                        datapoint = json[field][json[field].length - 1];
+                    }
+                    else {
+                        json[field] = {};
+                        datapoint = json[field]
+                    }
+                    this.recursiveJSON(datapoint, this._model._config[fieldSpec.domain], node, seen);
+                }
+
             }
         }
+    }
+
+    toJSON() {
+        const json = {};
+        this.recursiveJSON(json, this.entitySpecs, this, new Set())
         return json;
     }
 }

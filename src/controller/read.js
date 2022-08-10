@@ -19,7 +19,7 @@ export default class Read {
     getModelBasedOnFields(fields, domainName, _query = new Map()) {
         const domainSpecs = this._model._config[domainName];
         for (const field of fields) {
-            const { key, table, dataType } = domainSpecs.fields[field];
+            const { key, table, dataType, domain } = domainSpecs.fields[field];
             const datatype = this.getDataType(dataType);
             for (const tableSpec of table) {
                 if (!_query.has(tableSpec.tableId)) {
