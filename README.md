@@ -29,10 +29,32 @@
                 Create DataContainer
             </h2>
             <p>
-            create datacontainer 
+                create datacontainer 
             <br/>
-            <code>const dataContainer = model.DataContainer </code>
+            <code>const dataContainer = model.createDataContainer </code>
             </p>
+                <div style="left:10px">
+                    <h2>
+                        Read
+                    </h2>
+                    <p>
+                        use the container created
+                        Path to test case
+                        </br>
+                        <code>__tests__\read.test.js </code>
+                    </p>
+                </div>
+                <div style="left:10px">
+                    <h2>
+                        Write
+                    </h2>
+                    <p>
+                        use the container created
+                        Path to test case
+                        </br>
+                        <code>__tests__\write.test.js</code>
+                    </p>
+                </div>
         </div>
     </section>
     <section>
