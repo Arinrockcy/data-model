@@ -24,6 +24,16 @@
                 <br/> });
             </code>
         </p>
+        <div style="left:10px">
+            <h2>
+                Create DataContainer
+            </h2>
+            <p>
+            create datacontainer 
+            <br/>
+            <code>const dataContainer = model.DataContainer </code>
+            </p>
+        </div>
     </section>
     <section>
         <h1>
