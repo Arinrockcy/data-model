@@ -36,33 +36,48 @@ class DataContainer {
 
 
     }
-
+    flatQueryObjects(objs, flatQueryObject) { 
+        for (let obj of objs) {
+            flatQueryObject.push({fields: obj.fields, _domainName:obj._domainName});
+            this.flatQueryObjects(obj._childQueryObject);
+        }
+    }
     afterRead({ records, _queryObject }) {
-        const entitySpec = this._model._config[_queryObject._domainName];
-        const _payload = {};
+        const flatQueryObject = [];
+        flatQueryObject.push({
+            fields: _queryObject.fields,
+            _domainName: _queryObject._domainName
+        });
+        this.flatQueryObjects(_queryObject._childQueryObject, flatQueryObject);
         for (const _data of records) {
-            for (const field of _queryObject.fields) {
-                if (!Object.keys(entitySpec.fields).includes(field)) {
-                    continue;
-                }
-                if (Object.keys(_data).includes(field)) {
-                    _payload[field] = _data[field];
-                    continue;
-                }
-                const tableSpec = entitySpec.fields[field].table;
-
-                for (const { tableId } of tableSpec) {
-                    if (!Object.keys(_data).includes(tableId)) {
-                        continue;
+            for (const queryObject of flatQueryObject) {
+                const _payload = {};
+                const entitySpec = this._model._config[queryObject._domainName];
+                for (const field of queryObject.fields) {
+                    if(_data[field]){
+                        if (!Object.keys(entitySpec.fields).includes(field)) {
+                            continue;
+                        }
+                        if (Object.keys(_data).includes(field)) {
+                            _payload[field] = _data[field];
+                            continue;
+                        }
+                        const tableSpec = entitySpec.fields[field].table;
+        
+                        for (const { tableId } of tableSpec) {
+                            if (!Object.keys(_data).includes(tableId)) {
+                                continue;
+                            }
+                            if (Object.keys(_data[tableId][0]).includes(field)) {
+                                _payload[field] = _data[tableId][0][field];
+                                continue;
+                            }
+                        }
                     }
-                    if (Object.keys(_data[tableId][0]).includes(field)) {
-                        _payload[field] = _data[tableId][0][field];
-                        continue;
-                    }
                 }
-
+                this.addData(queryObject._domainName, _payload);
             }
-            this.addData(_queryObject._domainName, _payload);
+            
         }
     }
 

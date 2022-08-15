@@ -75,35 +75,13 @@ export default {
             keys: [['customerId'], ['orderId']]
         },
         fields: {
-            insertedId: {
-                key: false,
-                dataType: 'string',
-                path: 'insertedId',
-                table: [
-                    {
-                        tableId: 'order',
-                        columnName : '_id'
-                    }
-                ]
-            },
-            orderdetailsinsertedId: {
-                key: false,
-                path: 'orderdetails.orderdetailsinsertedId',
-                dataType: 'string',
-                table: [
-                    {
-                        tableId: 'orderdetails',
-                        columnName : '_id'
-                    }
-                ]
-            },
             customerId: {
                 key: true,
                 dataType: 'number',
                 path: 'customerId',
                 table: [
                     {
-                        tableId: 'order',
+                        tableId: 'customer',
                         columnName : 'customerId'
                     }
                 ]
@@ -114,11 +92,11 @@ export default {
                 path: 'orderId',
                 table: [
                     {
-                        tableId: 'order',
+                        tableId: 'customer',
                         columnName : 'orderId'
                     },
                     {
-                        tableId: 'orderdetails',
+                        tableId: 'customer',
                         columnName : 'orderId'
                     }
                 ]
@@ -129,7 +107,7 @@ export default {
                 dataType: 'string',
                 table: [
                     {
-                        tableId: 'order',
+                        tableId: 'customer',
                         columnName : 'label'
                     }
                 ]
@@ -140,7 +118,7 @@ export default {
                 path: 'orderdetails.quantity',
                 table: [
                     {
-                        tableId: 'orderdetails',
+                        tableId: 'customer',
                         columnName : 'quantity'
                     }
                 ]
@@ -151,38 +129,8 @@ export default {
                 dataType: 'number',
                 table: [
                     {
-                        tableId: 'orderdetails',
+                        tableId: 'customer',
                         columnName : 'price'
-                    }
-                ]
-            },
-            created: {
-                key: false,
-                path: 'created',
-                dataType: 'date',
-                table: [
-                    {
-                        tableId: 'orderdetails',
-                        columnName : 'created'
-                    },
-                    {
-                        tableId: 'order',
-                        columnName : 'created'
-                    }
-                ]
-            },
-            status: {
-                key: false,
-                dataType: 'string',
-                path: 'status',
-                table: [
-                    {
-                        tableId: 'orderdetails',
-                        columnName : 'status'
-                    },
-                    {
-                        tableId: 'order',
-                        columnName : 'status'
                     }
                 ]
             },
