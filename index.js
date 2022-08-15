@@ -9,6 +9,7 @@ const domainSchema = {
 export default class DataModel extends EventEmitter {
     _config = {};
     _dataContainer = {};
+
     constructor(config) {
         super();
         this._config = config;
@@ -18,8 +19,19 @@ export default class DataModel extends EventEmitter {
         this._dataContainer = new DataContainer(this);
     }
 
+    /**
+     * @deprecated use createDataContainer instead. DataContainer getter doesn't keep  heap memory on check
+     */
     get DataContainer() {
         return this._dataContainer;
+    }
+
+    /**
+     * @description creates new datacontainer every time its called.
+     * 
+     */
+    get createDataContainer() {
+        return new DataContainer(this);
     }
 
     get DomainFields() {
@@ -29,6 +41,7 @@ export default class DataModel extends EventEmitter {
     get sampleDominModel() {
         return domainModel;
     }
+
     get keys() {
         return getKeys;
     }
