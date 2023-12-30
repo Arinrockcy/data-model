@@ -1,8 +1,12 @@
 module.exports = {
   "env": {
     "browser": true,
-    "es2021": true
+    "es2021": true, 
+    "jest/globals": true 
   },
+  "plugins": [
+    "jest" // Add Jest plugin if not already present
+  ],
   "extends": "eslint:recommended",
   "overrides": [
     {
