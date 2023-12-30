@@ -1,4 +1,4 @@
-import Entity from "./entity.js";
+import Entity from './entity.js';
 import EntityCollection from './entity-collection.js';
 import getKeys from "../util/get-keys.js";
 import QueryObject from "./query-object.js";
