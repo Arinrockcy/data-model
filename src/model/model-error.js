@@ -1,73 +1,101 @@
-export default class ModelError extends Error {
+import ERRORCONSTANTS from "../constants/error-code";
+/**
+ * Represents a custom error class for modeling specific errors.
+ */
+class ModelError extends Error {
+  /**
+     * @typedef {Object} ModelErrorData
+     * @property {any} [customData] - Any custom data related to the error.
+     */
+  
   /**
      * Custom error class for modeling specific errors.
-     * @param {number} code - The error code.
+     * @param {string} code - The error code.
      * @param {string} message - The error message.
-     * @param {object} data - Additional data related to the error.
+     * @param {ModelErrorData} [data] - Additional data related to the error.
+     * @throws {Error} Throws an error if the provided error code is invalid.
      */
   constructor(code, message, data) {
-    // Call the Error class constructor with the provided message
     super(message);
-  
-    // Set the name, code, and data properties
+    
+    /**
+       * The name of the error class.
+       * @type {string}
+       */
     this.name = this.constructor.name;
-    this.code = code;
-    this._data = data; // Using _data to store the error-related data
   
-    // Capture the stack trace for debugging purposes
+    /**
+       * The error code.
+       * @type {string}
+       * @private
+       */
+    this._code = code;
+  
+    /**
+       * Additional data related to the error.
+       * @type {ModelErrorData}
+       * @private
+       */
+    this._data = data || {};
+  
+    if (!this.isValidErrorCode(code)) {
+      throw new Error(`Invalid error code: ${code}`);
+    }
+  
     Error.captureStackTrace(this, this.constructor);
   }
   
   /**
-     * Get the stack trace of the error.
-     * @returns {string} - The stack trace.
+     * Gets the error code.
+     * @returns {number} The error code.
      */
-  get stack() {
-    return this.stack;
+  get code() {
+    return this._code;
   }
   
   /**
-     * Get a string representation of the error object.
-     * Handles circular references if present.
-     * @returns {string} - String representation of the error.
+     * Sets the error code.
+     * @param {number} code - The error code to set.
+     * @throws {Error} Throws an error if the provided error code is invalid.
      */
-  get string() {
-    const getCircularReplacer = () => {
-      const seen = new WeakSet();
-      return (key, value) => {
-        if (typeof value === 'object' && value !== null) {
-          if (seen.has(value)) {
-            return '[Circular]';
-          }
-          seen.add(value);
-        }
-        return value;
-      };
-    };
+  set code(code) {
+    if (!this.isValidErrorCode(code)) {
+      throw new Error(`Invalid error code: ${code}`);
+    }
+    this._code = ERRORCONSTANTS[code].code;
+  }
   
-    return JSON.stringify(
-      {
-        name: this.name,
-        code: this.code,
-        message: this.message,
-        data: this.data, // Using the data getter here to access _data property
-        stack: this.stack,
-      },
-      getCircularReplacer()
-    );
+  /**
+     * Checks if the provided error code is valid.
+     * @param {number} code - The error code to validate.
+     * @returns {boolean} Returns true if the code is valid; otherwise, false.
+     * @private
+     */
+  isValidErrorCode(code) {
+    // Add your logic to check if the code exists in error constants or any other validation
+    return !Object.prototype.hasOwnProperty.call(ERRORCONSTANTS, code)
   }
   
   /**
      * Get specific data properties from the error.
-     * @returns {Object} - Object containing the data properties.
+     * @returns {ModelErrorData} Object containing the data properties.
      */
   get data() {
-    return this._data || {};
+    return this._data;
+  }
+  
+  /**
+     * Get a string representation of the error object, including data.
+     * @returns {string} String representation of the error with data.
+     */
+  toString() {
+    const dataString = this._data ? `Data: ${JSON.stringify(this._data)}` : '';
+    return `${this.name} (Code: ${this._code}): ${this.message}. ${dataString}`;
   }
   
   /**
      * Get the file name and line number where the error occurred.
-     * @returns {Object} - Object containing the fileName and lineNumber.
+     * @returns {Object} Object containing the fileName and lineNumber.
      */
   getErrorLocation() {
     const stackLines = (this.stack || '').split('\n').slice(1);
@@ -87,5 +115,10 @@ export default class ModelError extends Error {
   
     return { fileName: 'Unknown', lineNumber: -1 };
   }
+  
+  // Other methods and properties...
 }
+  
+export default ModelError;
+  
   

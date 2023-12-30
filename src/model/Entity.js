@@ -1,5 +1,13 @@
+// imports class instaance
 import Field from "./field.js";
+import ModelError from "./model-error.js";
+
+// import functions
 import getKeys from "../util/get-keys.js";
+
+// imports constant
+import ERRORLABEL from "../constants/error-lable.js";
+
 class Entity {
   // Properties
   _entityType = ''; // Type of the entity
@@ -117,10 +125,7 @@ class Entity {
   create(data) {
     const validationErrors = this.validate(data);
     if (validationErrors.length != 0) {
-      throw new Error('Entity Errors see data for more', {
-        message: JSON.stringify(data),
-        name: 'Entity Validation'
-      })
+      throw new ModelError(ERRORLABEL.INVALID_INPUT, 'See data for more', validationErrors);
     }
     for (const key in data) {
       const entitySpec = this._entitySpecs.fields[key];
@@ -165,10 +170,7 @@ class Entity {
   update(data) {
     const validationErrors = this.validate(data);
     if (validationErrors.length != 0) {
-      throw new Error('Entity Errors see data for more', {
-        message: JSON.stringify(data),
-        name: 'Entity Validation'
-      })
+      throw new ModelError(ERRORLABEL.INVALID_INPUT, 'See data for more', validationErrors);
     }
     for (const key in data) {
       const entitySpec = this._entitySpecs.fields[key];
@@ -258,7 +260,7 @@ class Entity {
     }
     for (const keySet of this._entitySpecs.metaData.keys) {
       if (!keySet.filter(key => keys.includes(key))) {
-        throw new Error(`${this.entityType} missing one or more key fields ${keySet.join(', ')}`);
+        throw new ModelError(ERRORLABEL.INVALID_INPUT, `${this.entityType} missing one or more key fields ${keySet.join(', ')}`);
       }
     }
     return errors;
@@ -272,7 +274,8 @@ class Entity {
   _relatedEntityKeyPair(field) {
     const domainSpec = this._entitySpecs.fields[field];
     if (!domainSpec.domain) {
-      throw new Error(`${field} is not valid entityType`);
+      throw new ModelError(ERRORLABEL.INVALID_INPUT, `${this.field} is not valid in ${this.entityType}`);
+
     }
     const keySet = [];
     for (const key of domainSpec.keys.flat()) {
