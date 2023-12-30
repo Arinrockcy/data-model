@@ -41,42 +41,45 @@ export default class Write {
    * @returns {Map} A Map object containing structured payload data for database operations.
    */
   processData(entities) {
-    const _payload = new Map();
+    const payloadMap = new Map();
+  
     for (const entity of entities) {
-      for (const key in entity) {
-        if (entity.entitySpecs.fields[key]) {
-          const entitySpec = entity.entitySpecs.fields[key];
-          if (Object.hasOwnProperty.call(entitySpec, "isOneToMany")) {
-            continue;
-          }
-          const element = typeof entity[key] === 'object' && entity[key].value ? entity[key].value : entity[key];
-          const dataType = this.getDataType(entitySpec.dataType);
-          for (const table of entitySpec.table) {
-            if (!_payload.has(table.tableId)) {
-              _payload.set(table.tableId, {
+      const { fields: entityFields, entitySpecs } = entity;
+  
+      for (const key in entityFields) {
+        const field = entityFields[key];
+  
+        if (field && !field.isOneToMany) {
+          const fieldValue = (typeof field === 'object' && field.value) ? field.value : field;
+          const dataType = this.getDataType(entitySpecs.fields[key].dataType);
+  
+          for (const table of entitySpecs.fields[key].table) {
+            const tableId = table.tableId;
+  
+            if (!payloadMap.has(tableId)) {
+              payloadMap.set(tableId, {
                 _data: {},
                 _keys: [],
                 _schema: {},
-                _modelName: table.tableId,
+                _modelName: tableId,
                 entity: entity
               });
             }
-            const payload = _payload.get(table.tableId);
-            if (entitySpec.key) {
-              payload._keys.push({
-                [key]: element
-              });
+  
+            const payload = payloadMap.get(tableId);
+  
+            if (entitySpecs.fields[key].key) {
+              payload._keys.push({ [key]: fieldValue });
             }
-            payload._data[key] = element;
-            payload._schema[key] = {
-              type: dataType
-            }
+  
+            payload._data[key] = fieldValue;
+            payload._schema[key] = { type: dataType };
           }
-
         }
       }
     }
-    return _payload;
+  
+    return payloadMap;
   }
 
   /**
