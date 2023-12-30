@@ -1,23 +1,32 @@
-export default function getKeys(entity, keyySlots) {
-    const keys = [];
-    if (entity.ids) {
-        for (const key in entity.ids) {
-            if (Object.hasOwnProperty.call(entity.ids, key)) {
-                const element = entity.ids[key];
-                keys.push({
-                    [key]: element
-                });
-            }
-        }
-    } else {
-        for (const iterator of keyySlots) {
-            if (entity[iterator]) {
+/**
+ * Retrieves keys from the given entity object based on available slots.
+ * @param {object} entity - The entity object from which keys are retrieved.
+ * @param {Array} keySlots - Slots or keys to extract from the entity.
+ * @returns {Array} - Array of objects containing keys and their corresponding values.
+ * @throws {TypeError} - Throws a TypeError if entity is not an object or keySlots is not an array.
+ */
 
-                keys.push({
-                    [iterator]: entity[iterator]
-                })
-            }
-        }
+export default function getKeys(entity, keySlots) {
+  if (typeof entity !== 'object' || entity === null) {
+    throw new TypeError('Entity should be an object.');
+  }
+    
+  if (!Array.isArray(keySlots)) {
+    throw new TypeError('Key slots should be provided as an array.');
+  }
+  const keys = [];
+  
+  if (entity.ids) {
+    for (const [key, value] of Object.entries(entity.ids)) {
+      keys.push({ [key]: value });
     }
-    return keys;
+  } else {
+    for (const keySlot of keySlots) {
+      if (entity[keySlot]) {
+        keys.push({ [keySlot]: entity[keySlot] });
+      }
+    }
+  }
+  
+  return keys;
 }

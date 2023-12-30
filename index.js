@@ -2,36 +2,33 @@ import DataContainer from './src/model/container.js';
 import domainModel from './src/constants/domain.model.js';
 import EventEmitter from 'events';
 import getKeys from './src/util/get-keys.js';
-import Joi from 'joi';
-const domainSchema = {
 
-}
 export default class DataModel extends EventEmitter {
-    _config = {};
-    _dataContainer = {};
-    constructor(config) {
-        super();
-        this._config = config;
-        this._domainFields = config.domainModel;
-        this._dbConfig = config.dbConfig;
-        this._config = this._domainFields;
-        this._dataContainer = new DataContainer(this);
-    }
+  _config = {};
+  _dataContainer = {};
+  constructor(config) {
+    super();
+    this._config = config;
+    this._domainFields = config.domainModel;
+    this._dbConfig = config.dbConfig;
+    this._config = this._domainFields;
+    this._dataContainer = new DataContainer(this);
+  }
 
-    get DataContainer() {
-        return this._dataContainer;
-    }
+  get DataContainer() {
+    return this._dataContainer;
+  }
 
-    get DomainFields() {
-        return this._domainFields
-    }
+  get DomainFields() {
+    return this._domainFields
+  }
 
-    get sampleDominModel() {
-        return domainModel;
-    }
-    get keys() {
-        return getKeys;
-    }
+  get sampleDominModel() {
+    return domainModel;
+  }
+  get keys() {
+    return getKeys;
+  }
 }
 
 // const model = new DataModel({
@@ -40,24 +37,24 @@ export default class DataModel extends EventEmitter {
 // });
 // const dataContainer = model.DataContainer
 // try {
-    // const customer = dataContainer.addData('customer', {
-    //     firstName: 'rockcy',
-    //     customerId: 1234567,
-    //     created: new Date('2022/10/12'),
-    //     action: 'I'
-    // });
-    // const order = dataContainer.addData('order', {
-    //     customerId: 1234567,
-    //     orderId: '12345678',
-    //     label: 'IPhone',
-    //     quantity: 1,
-    //     price: 123,
-    //     action: 'I'
-    // });
-    // (async ()=> {
-    //     const result = await dataContainer.write();
-    //     console.log(result);
-    // })();
+// const customer = dataContainer.addData('customer', {
+//     firstName: 'rockcy',
+//     customerId: 1234567,
+//     created: new Date('2022/10/12'),
+//     action: 'I'
+// });
+// const order = dataContainer.addData('order', {
+//     customerId: 1234567,
+//     orderId: '12345678',
+//     label: 'IPhone',
+//     quantity: 1,
+//     price: 123,
+//     action: 'I'
+// });
+// (async ()=> {
+//     const result = await dataContainer.write();
+//     console.log(result);
+// })();
 //     (async () => {
 //         await dataContainer.read({
 //             query: {
