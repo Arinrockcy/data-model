@@ -9,9 +9,9 @@ class DataContainer {
   _model = {};
 
   /**
-         * Constructor for DataContainer class.
-         * @param {Object} model - The model object containing configurations.
-         */
+    * Constructor for DataContainer class.
+    * @param {Object} model - The model object containing configurations.
+    */
   constructor(model) {
     this._model = model;
     this._entityCollection = new EntityCollection(model);
@@ -20,20 +20,20 @@ class DataContainer {
     this._model.on('readData', this._loadReadResult.bind(this));
   }
   /**
-     * Getter for retrieving all entities from the collection.
-     * @returns {Array} - Array of entities.
-     */
+       * Getter for retrieving all entities from the collection.
+       * @returns {Array} - Array of entities.
+       */
   get entities() {
     return this._entityCollection.getAllFromCollection();
   }
 
   /**
-     * Adds data to the entity collection based on the entity type and data provided.
-     * @param {string} entityType - Type of the entity to add data to.
-     * @param {Object} data - Data to be added to the entity.
-     * @returns {Entity} - The updated or newly created entity.
-     * @throws {Error} - Throws an error if entityType is not valid.
-     */
+       * Adds data to the entity collection based on the entity type and data provided.
+       * @param {string} entityType - Type of the entity to add data to.
+       * @param {Object} data - Data to be added to the entity.
+       * @returns {Entity} - The updated or newly created entity.
+       * @throws {Error} - Throws an error if entityType is not valid.
+       */
   addData(entityType, data) {
     const { _config } = this._model;
     if (!this._hasProperty(_config, entityType)) {
@@ -56,11 +56,11 @@ class DataContainer {
   }
 
   /**
-     * Flattens query objects for easier processing.
-     * @param {Array} objs - Array of query objects to flatten.
-     * @param {Array} flatQueryObject - The resulting flattened query object array.
-     * @throws {TypeError} - Throws a TypeError if objs or flatQueryObject is not an array.
-     */
+       * Flattens query objects for easier processing.
+       * @param {Array} objs - Array of query objects to flatten.
+       * @param {Array} flatQueryObject - The resulting flattened query object array.
+       * @throws {TypeError} - Throws a TypeError if objs or flatQueryObject is not an array.
+       */
   flatQueryObjects(queryObjects, flatQueryObject) {
     if (!Array.isArray(queryObjects) || !Array.isArray(flatQueryObject)) {
       throw new TypeError('Expected arrays as parameters for flatQueryObjects');
@@ -77,10 +77,10 @@ class DataContainer {
   }
 
   /**
-     * Callback function executed after data is read.
-     * Processes read data and adds/updates entities in the collection.
-     * @param {Object} readResult - Object containing read records and query object.
-     */
+       * Callback function executed after data is read.
+       * Processes read data and adds/updates entities in the collection.
+       * @param {Object} readResult - Object containing read records and query object.
+       */
   _loadReadResult(readResult) {
     if (typeof readResult !== 'object' || !readResult.records || !readResult._queryObject) {
       throw new TypeError('Invalid read result format');
@@ -122,22 +122,23 @@ class DataContainer {
   }
 
   _hasProperty(obj, prop) {
-    return Object.prototype.hasOwnProperty.call(obj, prop);}
+    return Object.prototype.hasOwnProperty.call(obj, prop);
+  }
   /**
-     * Writes entities to the data source using the write controller.
-     * @returns {Promise} - Promise resolving to the result of the write operation.
-     */
+       * Writes entities to the data source using the write controller.
+       * @returns {Promise} - Promise resolving to the result of the write operation.
+       */
   async write() {
     return await this.writeController.write(this.entities);
   }
 
   /**
-     * Reads data from the data source based on provided query objects.
-     * @param {Object} queryObject - Query object for reading data.
-     * @returns {Promise} - Promise resolving to the read data.
-     * @throws {TypeError} - Throws a TypeError if readResult is not an object or if the structure is invalid.
-
-     */
+       * Reads data from the data source based on provided query objects.
+       * @param {Object} queryObject - Query object for reading data.
+       * @returns {Promise} - Promise resolving to the read data.
+       * @throws {TypeError} - Throws a TypeError if readResult is not an object or if the structure is invalid.
+  
+       */
   async read(queryObject) {
     return await this.readController.read(new QueryObject(this._model, queryObject.query));
   }
