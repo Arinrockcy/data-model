@@ -130,12 +130,9 @@ class Entity {
     for (const key in data) {
       const entitySpec = this._entitySpecs.fields[key];
       const current = data[key];
-      if (!entitySpec) {
-        continue;
-      }
       if (key === 'action') {
         this.action = current;
-      } else {
+      } else if (entitySpec) {
         if (entitySpec.key) {
           this[key] = current;
           this._ids[key] = current;

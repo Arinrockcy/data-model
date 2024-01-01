@@ -1,4 +1,4 @@
-import ERRORCONSTANTS from "../constants/error-code";
+import ERRORCONSTANTS from "../constants/error-code.js";
 /**
  * Represents a custom error class for modeling specific errors.
  */

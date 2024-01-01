@@ -1,5 +1,5 @@
 // Importing ERRORCONSTANTS from the "error-code" file
-import ERRORCONSTANTS from "./error-code";
+import ERRORCONSTANTS from "./error-code.js";
 
 // Creating a new constant ERRORCONSTANTS_KEYS_AS_VALUES by mapping keys to their values
 const ERRORLABEL = Object.entries(ERRORCONSTANTS).reduce((acc, [key,]) => {
