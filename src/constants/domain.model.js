@@ -1,8 +1,8 @@
 export default {
-  customer: {
+  user: {
     metaData: {
-      primaryKeys: ['customerId'],
-      keys: [['customerId']]
+      primaryKeys: ['userId'],
+      keys: [['userId']]
     },
     fields: {
       insertedId: {
@@ -11,19 +11,19 @@ export default {
         dataType: 'string',
         table: [
           {
-            tableId: 'customer',
+            tableId: 'user',
             columnName: '_id'
           }
         ]
       },
-      customerId: {
+      userId: {
         key: true,
-        path: 'customerId',
+        path: 'userId',
         dataType: 'number',
         table: [
           {
-            tableId: 'customer',
-            columnName: 'customerId'
+            tableId: 'user',
+            columnName: 'userId'
           }
         ]
       },
@@ -33,7 +33,7 @@ export default {
         dataType: 'string',
         table: [
           {
-            tableId: 'customer',
+            tableId: 'user',
             columnName: 'fname'
           }
         ]
@@ -44,7 +44,7 @@ export default {
         dataType: 'string',
         table: [
           {
-            tableId: 'customer',
+            tableId: 'user',
             columnName: 'lname'
           }
         ]
@@ -55,7 +55,7 @@ export default {
         dataType: 'date',
         table: [
           {
-            tableId: 'customer',
+            tableId: 'user',
             columnName: 'created'
           }
         ]
@@ -65,24 +65,24 @@ export default {
         path: 'orders',
         domain: 'order',
         isOneToMany: true,
-        keys: [['customerId']]
+        keys: [['userId']]
       }
     }
   },
   order: {
     metaData: {
-      primaryKeys: ['customerId'],
-      keys: [['customerId'], ['orderId']]
+      primaryKeys: ['userId'],
+      keys: [['userId'], ['orderId']]
     },
     fields: {
-      customerId: {
+      userId: {
         key: true,
         dataType: 'number',
-        path: 'customerId',
+        path: 'userId',
         table: [
           {
-            tableId: 'customer',
-            columnName: 'customerId'
+            tableId: 'user',
+            columnName: 'userId'
           }
         ]
       },
@@ -92,11 +92,11 @@ export default {
         path: 'orderId',
         table: [
           {
-            tableId: 'customer',
+            tableId: 'user',
             columnName: 'orderId'
           },
           {
-            tableId: 'customer',
+            tableId: 'user',
             columnName: 'orderId'
           }
         ]
@@ -107,7 +107,7 @@ export default {
         dataType: 'string',
         table: [
           {
-            tableId: 'customer',
+            tableId: 'user',
             columnName: 'label'
           }
         ]
@@ -118,7 +118,7 @@ export default {
         path: 'orderdetails.quantity',
         table: [
           {
-            tableId: 'customer',
+            tableId: 'user',
             columnName: 'quantity'
           }
         ]
@@ -129,17 +129,17 @@ export default {
         dataType: 'number',
         table: [
           {
-            tableId: 'customer',
+            tableId: 'user',
             columnName: 'price'
           }
         ]
       },
-      customer: {
+      user: {
         key: false,
-        path: 'customer',
-        domain: 'customer',
+        path: 'user',
+        domain: 'user',
         isOneToMany: false,
-        keys: [['customerId']]
+        keys: [['userId']]
       }
     }
   }

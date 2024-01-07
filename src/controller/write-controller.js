@@ -44,16 +44,19 @@ export default class Write {
     const payloadMap = new Map();
   
     for (const entity of entities) {
-      const { fields: entityFields, entitySpecs } = entity;
+      const { entityFields, entitySpecs } = entity;
   
       for (const key in entityFields) {
-        const field = entityFields[key];
-  
-        if (field && !field.isOneToMany) {
+        const fieldSpec = entityFields[key];
+        const field = entity[key]
+        if (!field) {
+          continue;
+        }
+        if (fieldSpec && !fieldSpec.isOneToMany) {
           const fieldValue = (typeof field === 'object' && field.value) ? field.value : field;
-          const dataType = this.getDataType(entitySpecs.fields[key].dataType);
+          const dataType = this.getDataType(fieldSpec.dataType);
   
-          for (const table of entitySpecs.fields[key].table) {
+          for (const table of fieldSpec.table) {
             const tableId = table.tableId;
   
             if (!payloadMap.has(tableId)) {

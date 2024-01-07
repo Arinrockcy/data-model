@@ -18,13 +18,14 @@ class Entity {
   /**
    * Constructor for Entity class.
    * @param {string} entityType - Type of the entity.
-   * @param {Object} model - The model object containing entity configurations.
+   * @param {Object} dataContainer - The model object containing entity configurations.
    */
-  constructor(entityType, model) {
-    this._model = model
+  constructor(entityType, dataContainer) {
+    this._model = dataContainer._model;
+    this._dataContainer = dataContainer;
     this._relatedEntityMap = new Map();
     this.entityType = entityType;
-    this._entitySpecs = model._config[entityType];
+    this._entitySpecs = this._model._config[entityType];
     for (const fieldName in this._entitySpecs.fields) {
       if (Object.hasOwnProperty.call(this._entitySpecs.fields, fieldName)) {
         const entitySpec = this._entitySpecs.fields[fieldName]; 4
@@ -87,6 +88,10 @@ class Entity {
     return this._ids;
   }
 
+  get entityFields() {
+    return this.entitySpecs.fields;
+  }
+
   // Other Methods
 
   /**
@@ -101,7 +106,7 @@ class Entity {
         const cachedEntity = this._relatedEntityMap.get(field);
         if (cachedEntity.reload) {
           const keySet = this._relatedEntityKeyPair(field);
-          const entities = this._model._dataContainer._entityCollection.get(entityType, keySet);
+          const entities = this._dataContainer._entityCollection.get(entityType, keySet);
           cachedEntity.value = undefined;
           if (entities) {
             if (entitySpec.isOneToMany) {

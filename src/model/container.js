@@ -44,7 +44,7 @@ class DataContainer {
     const existEntity = this._entityCollection.get(entityType, entityKeys);
 
     if (!existEntity) {
-      const entity = new Entity(entityType, this._model);
+      const entity = new Entity(entityType, this);
       entity.create(data);
       this._entityCollection.add(entity);
       return entity;
