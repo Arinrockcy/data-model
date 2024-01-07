@@ -88,7 +88,7 @@ class DataContainer {
 
     const { records, _queryObject } = readResult;
     const flatQueryObject = [{ fields: _queryObject.fields, _domainName: _queryObject._domainName }];
-    this.flatQueryObjects(_queryObject._childQueryObject, flatQueryObject);
+    this.flatQueryObjects(_queryObject.childQueryObject, flatQueryObject);
 
     for (const _data of records) {
       for (const queryObject of flatQueryObject) {

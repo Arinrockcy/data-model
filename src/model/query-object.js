@@ -57,6 +57,9 @@ export default class QueryObject {
     this._parentQueryObject = parentQueryObject;
   }
 
+  get childQueryObject() {
+    return [...this._childQueryObject]
+  }
   /**
    * Generates a child query based on the provided domain.
    * @param {Object} param0 - Object containing domain information.

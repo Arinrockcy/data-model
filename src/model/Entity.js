@@ -11,7 +11,7 @@ import ERRORLABEL from "../constants/error-lable.js";
 class Entity {
   // Properties
   _entityType = ''; // Type of the entity
-  _action = 'U'; // Default action for entity (e.g., 'U' for update)
+  _action = null; // Default action for entity (e.g., null if read)
   _entitySpecs = {}; // Specifications and metadata of the entity
   _ids = {}; // IDs associated with the entity
   
