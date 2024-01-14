@@ -29,6 +29,7 @@ Key Features
         <p>
             Sample code to initiate data model
             <br/>
+            --- chages are coming in upcoming weeks
             <code>
                 const model = new DataModel({
                    <br/> domainModel: domainModel,
