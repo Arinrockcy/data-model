@@ -9,10 +9,10 @@ export default class QueryFilter {
    */
   constructor(model, filter, filterType) {
     this._model = model;
-    if (!this._model._config[filterType]) {
+    if (!this._model.domainSpec[filterType]) {
       throw new Error(`${filterType} is not valid domain`);
     }
-    const filedSpec = this._model._config[filterType].fields[filter.fieldName];
+    const filedSpec = this._model.domainSpec[filterType].fields[filter.fieldName];
     if (!filedSpec) {
       throw new Error(`${filter.fieldName} is not valid fieldName for domain ${filterType}`);
     }
@@ -63,7 +63,7 @@ export default class QueryFilter {
     /**
          * @readonly
          */
-    this._tables = new Map(Array.from(filedSpec.table.map(table => Object.values(table))));
+    this._tables = new Map(Array.from(filedSpec.tables.map(table => Object.values(table))));
     /**
          * @readonly
          */

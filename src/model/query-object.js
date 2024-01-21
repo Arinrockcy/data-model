@@ -12,12 +12,53 @@ export default class QueryObject {
     if (!queryObject || !queryObject.domain) {
       throw new Error('Invalid queryObject. Domain is required.');
     }
+    /**
+     * The model used for queries.
+     * @private
+     * @type {Object}
+     */
     this._model = model;
+
+    /**
+     * A set containing child query objects.
+     * @private
+     * @type {Set}
+     */
     this._childQueryObject = new Set();
+
+    /**
+     * A map containing filters for the query.
+     * @private
+     * @type {Map}
+     */
     this._filters = new Map();
+
+    /**
+     * The parent query object.
+     * @private
+     * @type {queryObject}
+     */
     this._parentQueryObject = parentQueryObject;
+
+    /**
+     * A set containing fields for the query.
+     * @private
+     * @type {Set}
+     */
     this._fields = new Set();
+
+    /**
+     * The domain name of the query object.
+     * @private
+     * @type {string}
+     */
     this._domainName = queryObject.domain;
+
+    /**
+     * The unique identifier for the query object.
+     * @private
+     * @type {string}
+     */
     this._queryObjectId = v1();
     this._add(queryObject);
   }
@@ -25,7 +66,7 @@ export default class QueryObject {
    * @returns {Array} array of fields
    */
   get fields() {
-    return Array.from(this._fields.values());
+    return [...this._fields];
   }
 
   /**
@@ -37,13 +78,13 @@ export default class QueryObject {
       throw new TypeError('Fields must be provided as an array.');
     }
     for (const field of fields) {
-      if (this._model._config[this._domainName].fields[field].domain) {
-        this.generateChildQuery(this._model._config[this._domainName].fields[field]);
+      if (this._model.domainSpec[this._domainName].fields[field].domain) {
+        this.generateChildQuery(this._model.domainSpec[this._domainName].fields[field]);
         fields.splice(fields.indexOf(field), 1);
       }
     }
 
-    this._fields = new Set([...this._model._config[this._domainName].metaData.keys.flat(), ...fields])
+    this._fields = new Set([...this._model.domainSpec[this._domainName].metaData.keys.flat(), ...fields])
   }
 
   /**
@@ -57,15 +98,25 @@ export default class QueryObject {
     this._parentQueryObject = parentQueryObject;
   }
 
-  get childQueryObject() {
+  /**
+   * @returns {queryObject[]} array of child query objects.
+   */
+  get childQueryObjects() {
     return [...this._childQueryObject]
+  }
+
+  /**
+   * @returns {string} this query object domain name.
+   */
+  get domainName() {
+    return this._domainName;
   }
   /**
    * Generates a child query based on the provided domain.
    * @param {Object} param0 - Object containing domain information.
    */
   generateChildQuery({ domain }) {
-    const entitySpec = this._model._config[domain];
+    const entitySpec = this._model.domainSpec[domain];
     const fields = Object.keys(entitySpec.fields).filter(field=> !entitySpec.fields[field].domain)
     const queryObject = [{
       query: {

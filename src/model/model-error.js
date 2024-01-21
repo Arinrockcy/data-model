@@ -73,7 +73,7 @@ class ModelError extends Error {
      */
   isValidErrorCode(code) {
     // Add your logic to check if the code exists in error constants or any other validation
-    return !Object.prototype.hasOwnProperty.call(ERRORCONSTANTS, code)
+    return Object.prototype.hasOwnProperty.call(ERRORCONSTANTS, code)
   }
   
   /**

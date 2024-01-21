@@ -93,7 +93,7 @@ class DataContainer {
     for (const _data of records) {
       for (const queryObject of flatQueryObject) {
         const _payload = {};
-        const entitySpec = this._model._config[queryObject._domainName];
+        const entitySpec = this._model.domainSpec[queryObject._domainName];
 
         for (const field of queryObject.fields) {
           if (_data[field]) {

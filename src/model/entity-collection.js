@@ -56,7 +56,7 @@ export default class EntityCollection {
       this.collection.set(entityType, new Map());
     }
     this._add(
-      this._model._config[entityType].metaData.keys.flat().entries(),
+      this._model.domainSpec[entityType].metaData.keys.flat().entries(),
       entity,
       this.collection.get(entityType),
       null

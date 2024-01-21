@@ -6,7 +6,7 @@ import ModelError from "./model-error.js";
 import getKeys from "../util/get-keys.js";
 
 // imports constant
-import ERRORLABEL from "../constants/error-lable.js";
+import ERRORLABEL from "../constants/error-label.js";
 
 class Entity {
   // Properties
@@ -25,7 +25,7 @@ class Entity {
     this._dataContainer = dataContainer;
     this._relatedEntityMap = new Map();
     this.entityType = entityType;
-    this._entitySpecs = this._model._config[entityType];
+    this._entitySpecs = this._model.domainSpec[entityType];
     for (const fieldName in this._entitySpecs.fields) {
       if (Object.hasOwnProperty.call(this._entitySpecs.fields, fieldName)) {
         const entitySpec = this._entitySpecs.fields[fieldName]; 4
@@ -345,7 +345,7 @@ class Entity {
             json[field] = {};
             datapoint = json[field]
           }
-          this.recursiveJSON(datapoint, this._model._config[fieldSpec.domain], node, seen);
+          this.recursiveJSON(datapoint, this._model.domainSpec[fieldSpec.domain], node, seen);
         }
 
       }
