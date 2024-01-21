@@ -41,9 +41,9 @@ export default class ReadQueryController {
   getModelBasedOnFields(fields, domainName, _query = new Map()) {
     const domainSpecs = this._model.domainSpec[domainName];
     for (const field of fields) {
-      const { key, table, dataType } = domainSpecs.fields[field];
+      const { key, tables, dataType } = domainSpecs.fields[field];
       const dataTypeDb = this.getDBDataType(dataType);
-      for (const tableSpec of table) {
+      for (const tableSpec of tables) {
         if (!_query.has(tableSpec.tableId)) {
           _query.set(tableSpec.tableId, {
             _schema: {},
