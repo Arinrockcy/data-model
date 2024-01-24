@@ -103,6 +103,16 @@ export default class ReadController {
     }
   }
 
+  _processDBTypesQueries() {
+    for (const [, queryObjects] of this._dbTypes) {
+      for (const queryObject of queryObjects) {
+        if (queryObject.parentQueryObject && queryObjects.has(queryObject.parentQueryObject)) {
+          queryObjects.delete(queryObject)
+        }
+      }
+    }
+  }
+
   /**
    * Perform read operation based on the provided query object.
    * @public
@@ -113,6 +123,7 @@ export default class ReadController {
     this._processQueryObject(queryObject);
     // Additional processing or logging can be added here.
 
+    this._processDBTypesQueries();
     for (const [dbType, queryObjects] of this._dbTypes) {
       for (const queryObject of queryObjects) {
         await this._dbControllers.get(dbType).read(queryObject);

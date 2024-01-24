@@ -3,7 +3,6 @@ import QueryFilterGroup from '../../model/query-filter-group.js';
 // import QueryFilter from '../model/query-filters.js';
 import mongoose from 'mongoose';
 import { dataTypeMap } from "../config.js";
-import removeModels from '../../util/remove-models.js';
 
 /**
  * ReadController class responsible for handling read operations from MongoDB.
@@ -244,6 +243,9 @@ export default class ReadQueryController {
     return queryObjectsByFileds;
   }
 
+  _clearModels() {
+    mongoose.connections.filter(connection => connection.name).map(connection =>connection.models = {});
+  }
 
   /**
    * Perform a read operation based on the provided QueryObject.
@@ -263,7 +265,7 @@ export default class ReadQueryController {
       records: result,
       _queryObject: queryObject 
     });
-    removeModels();
+    this._clearModels();
     return result;
   }
 
