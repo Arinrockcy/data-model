@@ -107,16 +107,20 @@ export default class ReadController {
     }
   }
 
+  /**
+   * Clean up unnecessary queries in the _dbTypes set.
+   * @private
+   */
   _processDBTypesQueries() {
     for (const [, connectionSets] of this._dbTypes) {
       for (const [, queryObjects] of connectionSets) {
         for (const queryObject of queryObjects) {
+          // Remove the query if it has a parent and the parent is present in the set
           if (queryObject.parentQueryObject && queryObjects.has(queryObject.parentQueryObject)) {
-            queryObjects.delete(queryObject)
+            queryObjects.delete(queryObject);
           }
         }
       }
-      
     }
   }
 
@@ -127,17 +131,22 @@ export default class ReadController {
    * @param {Object} queryObject - The query object for the read operation.
    */
   async read(queryObject) {
+    // Process the query object and its children
     this._processQueryObject(queryObject);
+
     // Additional processing or logging can be added here.
 
+    // Clean up unnecessary queries in the _dbTypes set
     this._processDBTypesQueries();
+
+    // Perform read operation for each database type and associated query objects
     for (const [dbType, connectionSets] of this._dbTypes) {
       for (const [, queryObjects] of connectionSets) {
         for (const queryObject of queryObjects) {
+          // Call the read method on the corresponding database controller
           await this._dbControllers.get(dbType).read(queryObject);
         }
       }
-      
     }
   }
 }
