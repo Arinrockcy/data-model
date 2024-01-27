@@ -51,11 +51,15 @@ export default class ReadController {
       // If a matching database type is found, add the query object to the corresponding set
       if (dbType) {
         if (!this._dbTypes.has(dbType)) {
-          this._dbTypes.set(dbType, new Set());
+          this._dbTypes.set(dbType, new Map());
         }
 
         const _dbType = this._dbTypes.get(dbType);
-        _dbType.add(queryObject);
+        if (!_dbType.has(connectionName)) {
+          _dbType.set(connectionName, new Set());
+        }
+        const _connectionSet = _dbType.get(connectionName);
+        _connectionSet.add(queryObject);
       }
     }
   }
@@ -104,12 +108,15 @@ export default class ReadController {
   }
 
   _processDBTypesQueries() {
-    for (const [, queryObjects] of this._dbTypes) {
-      for (const queryObject of queryObjects) {
-        if (queryObject.parentQueryObject && queryObjects.has(queryObject.parentQueryObject)) {
-          queryObjects.delete(queryObject)
+    for (const [, connectionSets] of this._dbTypes) {
+      for (const [, queryObjects] of connectionSets) {
+        for (const queryObject of queryObjects) {
+          if (queryObject.parentQueryObject && queryObjects.has(queryObject.parentQueryObject)) {
+            queryObjects.delete(queryObject)
+          }
         }
       }
+      
     }
   }
 
@@ -124,10 +131,13 @@ export default class ReadController {
     // Additional processing or logging can be added here.
 
     this._processDBTypesQueries();
-    for (const [dbType, queryObjects] of this._dbTypes) {
-      for (const queryObject of queryObjects) {
-        await this._dbControllers.get(dbType).read(queryObject);
+    for (const [dbType, connectionSets] of this._dbTypes) {
+      for (const [, queryObjects] of connectionSets) {
+        for (const queryObject of queryObjects) {
+          await this._dbControllers.get(dbType).read(queryObject);
+        }
       }
+      
     }
   }
 }
