@@ -1,16 +1,22 @@
+import BaseController from "./base-controller";
 
-export default class Write {
-
-  /**
-     * Constructs a Write object.
-     * @param {Object} model - The model object representing the database configuration.
-     */
+/**
+ * WriteController class responsible for handling write operations to MongoDB.
+ * @class
+ */
+export default class WriteController extends BaseController {
   constructor(model) {
-    this._model = model;
-    
+    super(model, 'write');
   }
 
-  async save() {
-
+  /**
+   * Perform write operation based on the provided query object.
+   * @public
+   * @async
+   * @param {Object} queryObject - The query object for the write operation.
+   */
+  async write(queryObject) {
+    // Execute write operation
+    await this.execute(queryObject);
   }
 }
