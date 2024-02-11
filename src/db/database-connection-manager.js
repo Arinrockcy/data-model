@@ -31,7 +31,7 @@ export default class DataBaseConnectionManager {
     }
     this._dbType = dbType;
     if (!dbConfig || typeof dbConfig != 'object') {
-      throw new ModelError(ERRORLABEL.INVALID_INPUT, `dbType expected to be Object, got ${typeof dbConfig}`)
+      throw new ModelError(ERRORLABEL.INVALID_INPUT, `dbConfig expected to be Object, got ${typeof dbConfig}`)
     }
     this._dbConfig = dbConfig;
 

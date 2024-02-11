@@ -136,7 +136,8 @@ const model = new DataModel({
 model.openDataBaseConnection({
   modelData: {
     connectionString: 'mongodb+srv://data_model:9NdS0oZRNrpw8ht6@cluster0.24asb.mongodb.net/?retryWrites=true&w=majority',
-    dbType: 'mongodb'
+    dbType: 'mongodb',
+    connectionName: 'modelData'
   }
 });
 const dataContainer = model.dataContainer

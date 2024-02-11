@@ -21,7 +21,7 @@ export default class ReadController {
 
     // Map to store query objects based on their corresponding database types
     /** @private */
-    this._dbTypes = new Map();
+    this._connectionSets = new Map();
 
     // Initialize database controllers during construction
     this._processDBControllers();
@@ -43,22 +43,14 @@ export default class ReadController {
       // Find the connection name associated with the field
       const connectionName = tables.find(table => table.connectionName).connectionName;
 
-      // Find the database type for the given connection name
-      const [dbType] = [...this._model._dataBaseTypeSet].find(
-        ([, connectionNameSet]) => connectionNameSet.has(connectionName)
-      ) || [];
 
       // If a matching database type is found, add the query object to the corresponding set
-      if (dbType) {
-        if (!this._dbTypes.has(dbType)) {
-          this._dbTypes.set(dbType, new Map());
+      if (connectionName) {
+       
+        if (!this._connectionSets.has(connectionName)) {
+          this._connectionSets.set(connectionName, new Set());
         }
-
-        const _dbType = this._dbTypes.get(dbType);
-        if (!_dbType.has(connectionName)) {
-          _dbType.set(connectionName, new Set());
-        }
-        const _connectionSet = _dbType.get(connectionName);
+        const _connectionSet = this._connectionSets.get(connectionName);
         _connectionSet.add(queryObject);
       }
     }
@@ -102,8 +94,10 @@ export default class ReadController {
    */
   _processDBControllers() {
     // Iterate through the configured database types and initialize corresponding controllers
-    for (const [dbType, ReadQueryController] of databases.get('read')) {
-      this._dbControllers.set(dbType, new ReadQueryController(this._model));
+    for (const [connectionName, dataBaseConnectionManager] of this._model._dataBaseConnections) {
+      const { dbType } = dataBaseConnectionManager;
+      const ReadQueryController = databases.get('read').get(dbType);
+      this._dbControllers.set(connectionName, new ReadQueryController(this._model));
     }
   }
 
@@ -112,15 +106,14 @@ export default class ReadController {
    * @private
    */
   _processDBTypesQueries() {
-    for (const [, connectionSets] of this._dbTypes) {
-      for (const [, queryObjects] of connectionSets) {
-        for (const queryObject of queryObjects) {
-          // Remove the query if it has a parent and the parent is present in the set
-          if (queryObject.parentQueryObject && queryObjects.has(queryObject.parentQueryObject)) {
-            queryObjects.delete(queryObject);
-          }
+    for (const [, queryObjects] of this._connectionSets) {
+      for (const queryObject of queryObjects) {
+        // Remove the query if it has a parent and the parent is present in the set
+        if (queryObject.parentQueryObject && queryObjects.has(queryObject.parentQueryObject)) {
+          queryObjects.delete(queryObject);
         }
       }
+      
     }
   }
 
@@ -140,13 +133,12 @@ export default class ReadController {
     this._processDBTypesQueries();
 
     // Perform read operation for each database type and associated query objects
-    for (const [dbType, connectionSets] of this._dbTypes) {
-      for (const [, queryObjects] of connectionSets) {
-        for (const queryObject of queryObjects) {
-          // Call the read method on the corresponding database controller
-          await this._dbControllers.get(dbType).read(queryObject);
-        }
+    for (const [connectionName, queryObjects] of this._connectionSets) {
+      for (const queryObject of queryObjects) {
+        // Call the read method on the corresponding database controller
+        await this._dbControllers.get(connectionName).read(queryObject);
       }
     }
+    
   }
 }

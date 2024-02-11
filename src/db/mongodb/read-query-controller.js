@@ -253,7 +253,7 @@ export default class ReadQueryController {
    * @param {QueryObject} queryObject - The query object to execute.
    * @returns {Promise<Array>} Resulting data from the read operation.
    */
-  async read(queryObject) {
+  async read(queryObject, connectionName) {
     if (!(queryObject instanceof QueryObject)) {
       throw new Error(`${typeof queryObject} is not valid QueryObject`)
     }
