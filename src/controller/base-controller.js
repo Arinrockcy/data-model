@@ -100,7 +100,7 @@ export default class BaseController {
     for (const [connectionName, dataBaseConnectionManager] of this._model._dataBaseConnections) {
       const { dbType } = dataBaseConnectionManager;
       const QueryController = databases.get(this._operationType).get(dbType);
-      this._dbControllers.set(connectionName, new QueryController(this._model));
+      this._dbControllers.set(connectionName, new QueryController(this._model, connectionName));
     }
   }
 

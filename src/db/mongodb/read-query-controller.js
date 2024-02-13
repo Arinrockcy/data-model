@@ -12,9 +12,9 @@ export default class ReadQueryController {
    * Constructor for ReadController.
    * @param {Object} model - The model for which the controller is created.
    */
-  constructor(model) {
+  constructor(model, connectionName) {
     this._model = model;
-    this._DB = {};
+    this._dataBaseConnection = model._dataBaseConnections.get(connectionName).getConnection();
   }
 
   /**
@@ -253,7 +253,7 @@ export default class ReadQueryController {
    * @param {QueryObject} queryObject - The query object to execute.
    * @returns {Promise<Array>} Resulting data from the read operation.
    */
-  async read(queryObject, connectionName) {
+  async read(queryObject) {
     if (!(queryObject instanceof QueryObject)) {
       throw new Error(`${typeof queryObject} is not valid QueryObject`)
     }
@@ -280,11 +280,11 @@ export default class ReadQueryController {
     for (const modelObject of models) {
       const [, model] = modelObject;
       if (!mongoose.models[model._modelName]) {
-        this._DB.model(model._modelName, new mongoose.Schema(model._schema));
+        this._dataBaseConnection.model(model._modelName, new mongoose.Schema(model._schema));
       }
             
     }
-    const _model = mongoose.models[baseModel._modelName] || this._DB.model(baseModel._modelName, new mongoose.Schema(baseModel._schema));
+    const _model = mongoose.models[baseModel._modelName] || this._dataBaseConnection.model(baseModel._modelName, new mongoose.Schema(baseModel._schema));
     try {
       return await _model.aggregate(query).exec();
     } catch (error) {

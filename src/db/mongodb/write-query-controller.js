@@ -3,8 +3,9 @@ import { DB } from '../../db/connect.js';
 import mongoose from 'mongoose';
 import removeModels from "../../util/remove-models.js";
 export default class WriteQueryController {
-  constructor(model) {
+  constructor(model, connectionName) {
     this._model = model;
+    this._dataBaseConnection = model._dataBaseConnections.get(connectionName);
   }
   /**
      * Retrieves the data type from the dataTypeMap based on the given dataType.
