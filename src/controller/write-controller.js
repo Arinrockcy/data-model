@@ -13,10 +13,10 @@ export default class WriteController extends BaseController {
    * Perform write operation based on the provided query object.
    * @public
    * @async
-   * @param {Object} queryObject - The query object for the write operation.
+   * @param {Entity} entities - The entities for the write operation.
    */
-  async write(queryObject) {
+  async write(entities) {
     // Execute write operation
-    await this.execute(queryObject);
+    await this.execute(entities);
   }
 }

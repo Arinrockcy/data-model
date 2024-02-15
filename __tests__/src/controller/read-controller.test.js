@@ -2,7 +2,6 @@
 
 import ReadController from '../../../src/controller/read-controller.js'
 // Import any other dependencies needed for testing
-import { describe, expect } from '@jest/globals';
 describe('ReadController', () => {
   let readController = {};
   const mockModel = {

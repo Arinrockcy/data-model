@@ -142,16 +142,16 @@ model.openDataBaseConnection({
 });
 const dataContainer = model.dataContainer
 try {
-  // const customer = dataContainer.addData('user', {
-  //   firstName: 'rockcy',
-  //   userId: 1234567,
-  //   created: new Date('2022/10/12'),
-  //   action: 'I'
-  // });
+  const customer = dataContainer.addData('user', {
+    firstName: 'rockcy',
+    userId: 1234567,
+    created: new Date('2022/10/12'),
+    action: 'I'
+  });
 
   (async() => {
-    // const result = await dataContainer.write();
-    // console.log(result);
+    const result = await dataContainer.write();
+    console.log(result);
     await dataContainer.read({
       query: {
         filter: [

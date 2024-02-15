@@ -1,3 +1,4 @@
 export default {
-  presets: ["@babel/preset-env"]
+  preset: './jest-preset',
+  "testEnvironment": "node"
 };
