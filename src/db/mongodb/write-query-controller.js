@@ -5,7 +5,7 @@ import removeModels from "../../util/remove-models.js";
 export default class WriteQueryController {
   constructor(model, connectionName) {
     this._model = model;
-    this._dataBaseConnection = model._dataBaseConnections.get(connectionName);
+    this._dataBaseConnection = model._dataBaseConnections.get(connectionName).getConnection();
   }
   /**
      * Retrieves the data type from the dataTypeMap based on the given dataType.
@@ -14,7 +14,7 @@ export default class WriteQueryController {
      * @throws {Error} Throws an error if the provided data type is not found in the map.
      */
   init() {
-    this._DB = DB(this._model._dbConfig);
+    this._dataBaseConnection = DB(this._model._dbConfig);
   }
   /**
      * Processes entities and converts them into a structured payload for database operations.
@@ -49,7 +49,7 @@ export default class WriteQueryController {
           const fieldValue = (typeof field === 'object' && field.value) ? field.value : field;
           const dataType = this.getDataType(fieldSpec.dataType);
   
-          for (const table of fieldSpec.table) {
+          for (const table of fieldSpec.tables) {
             const tableId = table.tableId;
   
             if (!payloadMap.has(tableId)) {
@@ -89,7 +89,7 @@ export default class WriteQueryController {
     const insertedId = result.id;
     const fieldSpec = Object.values(entity._entitySpecs.fields).find(
       field =>
-        field.table.filter(
+        field.tables.filter(
           table =>
             table.tableId === modelName
                         &&
@@ -138,7 +138,7 @@ export default class WriteQueryController {
       return 0
     }
     const payload = _payload.pop();
-    const _model = mongoose.models[payload._modelName] || this._DB.model(payload._modelName, new mongoose.Schema(payload._schema));
+    const _model = mongoose.models[payload._modelName] || this._dataBaseConnection.model(payload._modelName, new mongoose.Schema(payload._schema));
     const options = { upsert: true, new: true, setDefaultsOnInsert: true };
     const result = await _model.findOneAndUpdate(this.processCondition(payload._keys), payload._data, options);
     this.afterSave(result, payload.entity, payload._modelName)

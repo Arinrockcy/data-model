@@ -107,7 +107,7 @@ class Entity {
         if (cachedEntity.reload) {
           const keySet = this._relatedEntityKeyPair(field);
           const entities = this._dataContainer._entityCollection.get(entityType, keySet);
-          cachedEntity.value = undefined;
+          cachedEntity.value = entitySpec.isOneToMany ? [] : undefined;
           if (entities) {
             if (entitySpec.isOneToMany) {
               cachedEntity.value = entities;

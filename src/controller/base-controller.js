@@ -142,4 +142,13 @@ export default class BaseController {
       }
     }
   }
+
+  async saveData(modelNameMap) {
+    for (const [connectionName, entities] of modelNameMap) {
+      
+      // Call the appropriate method (read/write) on the corresponding database controller
+      await this._dbControllers.get(connectionName)[this._operationType]([...entities]);
+      
+    }
+  }
 }
