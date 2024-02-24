@@ -21,7 +21,12 @@ export default class WriteController extends BaseController {
     // Execute write operation
     await this.saveData(this._modelNameMap);
   }
-
+ 
+  /**
+   * Group entities by their model name.
+   * @private
+   * @param {Array<Entity>} entities - The entities to group.
+   */
   _groupByModelName(entities) {
     for (const entity of entities) {
       const { fields } = entity._entitySpecs;
