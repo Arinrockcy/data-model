@@ -1,96 +1,130 @@
+
+// class imports
 import DataContainer from './src/model/container.js';
-import domainModel from './src/constants/domain.model.js';
 import EventEmitter from 'events';
+import ModelError from './src/model/model-error.js';
+import DataBaseConnectionManager from './src/db/database-connection-manager.js';
+
+// functions imports
 import getKeys from './src/util/get-keys.js';
-import Joi from 'joi';
-const domainSchema = {
 
-}
+// constant imports
+import domainModel from './src/constants/domain.model.js';
+import DBTYPES from './src/constants/db-types.js';
+import ERRORLABEL from './src/constants/error-label.js';
+
 export default class DataModel extends EventEmitter {
-    _config = {};
-    _dataContainer = {};
+  /**
+   * Private properties:
+   * - _config: Holds the configuration object.
+   * - _dataBaseConnections: Map to store database connections.
+   * - _fieldsSpcByConnection: Map to store domain field specifications by connection.
+   */
+  _config = {};
 
-    constructor(config) {
-        super();
-        this._config = config;
-        this._domainFields = config.domainModel;
-        this._dbConfig = config.dbConfig;
-        this._config = this._domainFields;
-        this._dataContainer = new DataContainer(this);
-    }
+  /**
+   * Constructor for DataModel.
+   * Initializes the DataModel with the provided configuration.
+   * @param {object} config - The configuration object containing domainModel and dbConfig.
+   */
+  constructor(config) {
+    super();
+    // Initialize the configuration with the provided domainModel.
+    this._config = config.domainModel;
+    // Map to store database connections.
+    this._dataBaseConnections = new Map();
+    // Map to store domain field specifications by connection.
+    this._fieldsSpcByConnection = new Map();
+    // Map to store list of DBTypes
+    this._dataBaseTypeSet = new Map()
 
-    /**
-     * @deprecated use createDataContainer instead. DataContainer getter doesn't keep  heap memory on check
-     */
-    get DataContainer() {
-        return this._dataContainer;
-    }
+    // Process domain fields during initialization.
+    this._processDomainFields();
+  }
 
-    /**
-     * @description creates new datacontainer every time its called.
-     * 
-     */
-    get createDataContainer() {
-        return new DataContainer(this);
-    }
+  /**
+   * Getter method to retrieve the dataContainer.
+   * @returns {DataContainer} - Returns a new instance of DataContainer using this DataModel instance.
+   */
+  get dataContainer() {
+    return new DataContainer(this);
+  }
 
-    get DomainFields() {
-        return this._domainFields
-    }
+  /**
+   * Getter method to access the domainFields.
+   * @returns {object} - Returns the domain spec configuration.
+   */
+  get domainSpec() {
+    return this._config;
+  }
 
-    get sampleDominModel() {
-        return domainModel;
-    }
+  /**
+   * Getter method to retrieve a sample domain model.
+   * @returns {object} - Returns a sample domain model (assuming domainModel is defined elsewhere).
+   */
+  get sampleDomainModel() {
+    return domainModel;
+  }
 
-    get keys() {
-        return getKeys;
+  /**
+   * Getter method to access keys.
+   * @returns {function} - Returns keys function (assuming getKeys is defined elsewhere).
+   */
+  get keys() {
+    return getKeys;
+  }
+
+  /**
+   * Opens database connections based on the provided configurations.
+   * @param {object[]} configs - Array of database configurations with dbType and other settings.
+   * @throws {ModelError} - Throws an error if an invalid database type is provided.
+   */
+  openDataBaseConnection(configs) {
+    for (const connectionName in configs) {
+      const config = configs[connectionName]
+      const { dbType, ...dbConfig } = config;
+      if (!Object.values(DBTYPES).includes(dbType)) {
+        throw new ModelError(ERRORLABEL.INVALID_VALUE, `${dbType} is should be one of ${Object.values(DBTYPES).join()}`);
+      }
+      const connectionManager = new DataBaseConnectionManager(this);
+      connectionManager.openConnection(dbConfig, dbType)
+      this._dataBaseConnections.set(connectionName, connectionManager);
+      if (!this._dataBaseTypeSet.has(dbType)) {
+        this._dataBaseTypeSet.set(dbType, new Set());
+      }
+      const dbSets = this._dataBaseTypeSet.get(dbType);
+      dbSets.add(connectionName);
     }
+  }
+
+  /**
+   * Processes domain fields to store information about connections and fields in _fieldsSpcByConnection.
+   * @private
+   */
+  _processDomainFields() {
+    for (const domainName in this.domainSpec) {
+      const domainSpec = this.domainSpec[domainName];
+      for (const fieldName in domainSpec.fields) {
+        const { tables } = domainSpec.fields[fieldName];
+        if (!tables) {
+          continue;
+        }
+        for (const { connectionName } of tables) {
+          if (!this._fieldsSpcByConnection.has(connectionName)) {
+            this._fieldsSpcByConnection.set(connectionName, new Map());
+          }
+          const connectionSpec = this._fieldsSpcByConnection.get(connectionName);
+          if (!connectionSpec.has(domainName)) {
+            connectionSpec.set(domainName, new Set());
+          }
+          const fieldsSpec = connectionSpec.get(domainName);
+          if (!fieldsSpec.has(domainName)) {
+            fieldsSpec.add(fieldName)
+          }
+        }
+
+      }
+    }
+  }
+
 }
-
-// const model = new DataModel({
-//     domainModel: domainModel,
-//     dbConfig: 'mongodb+srv://data_model:data_model@cluster0.24asb.mongodb.net/data_model?retryWrites=true&w=majority'
-// });
-// const dataContainer = model.DataContainer
-// try {
-    // const customer = dataContainer.addData('customer', {
-    //     firstName: 'rockcy',
-    //     customerId: 1234567,
-    //     created: new Date('2022/10/12'),
-    //     action: 'I'
-    // });
-    // const order = dataContainer.addData('order', {
-    //     customerId: 1234567,
-    //     orderId: '12345678',
-    //     label: 'IPhone',
-    //     quantity: 1,
-    //     price: 123,
-    //     action: 'I'
-    // });
-    // (async ()=> {
-    //     const result = await dataContainer.write();
-    //     console.log(result);
-    // })();
-//     (async () => {
-//         await dataContainer.read({
-//             query: {
-//                 filter: [
-//                     {
-//                         fieldName: 'customerId',
-//                         comparator: '=',
-//                         value: 1234567
-//                     }
-//                 ],
-//                 domain: 'customer',
-//                 fields: [ 'firstName', 'orders', 'lastName'],
-//                 childQuery: []
-//             }
-//         });
-//         const order = dataContainer._entityCollection.get('customer')[0];
-//         const json = order.toJSON();
-//         console.log(json);
-//     })();
-    
-// } catch (e) {
-//     console.log(e);
-// }
