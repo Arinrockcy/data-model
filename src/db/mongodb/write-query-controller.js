@@ -1,5 +1,4 @@
 import { dataTypeMap } from "../../db/config.js";
-import { DB } from '../../db/connect.js';
 import mongoose from 'mongoose';
 import removeModels from "../../util/remove-models.js";
 export default class WriteQueryController {
@@ -7,15 +6,7 @@ export default class WriteQueryController {
     this._model = model;
     this._dataBaseConnection = model._dataBaseConnections.get(connectionName).getConnection();
   }
-  /**
-     * Retrieves the data type from the dataTypeMap based on the given dataType.
-     * @param {string} dataType - The data type to retrieve from the map.
-     * @returns {any} The corresponding data type retrieved from the map.
-     * @throws {Error} Throws an error if the provided data type is not found in the map.
-     */
-  init() {
-    this._dataBaseConnection = DB(this._model._dbConfig);
-  }
+
   /**
      * Processes entities and converts them into a structured payload for database operations.
      * @param {Array<Object>} entities - An array of entity objects to process.
@@ -35,10 +26,10 @@ export default class WriteQueryController {
    */
   processData(entities) {
     const payloadMap = new Map();
-  
+
     for (const entity of entities) {
       const { entityFields, entitySpecs } = entity;
-  
+
       for (const key in entityFields) {
         const fieldSpec = entityFields[key];
         const field = entity[key]
@@ -48,10 +39,10 @@ export default class WriteQueryController {
         if (fieldSpec && !fieldSpec.isOneToMany) {
           const fieldValue = (typeof field === 'object' && field.value) ? field.value : field;
           const dataType = this.getDataType(fieldSpec.dataType);
-  
+
           for (const table of fieldSpec.tables) {
             const tableId = table.tableId;
-  
+
             if (!payloadMap.has(tableId)) {
               payloadMap.set(tableId, {
                 _data: {},
@@ -61,20 +52,20 @@ export default class WriteQueryController {
                 entity: entity
               });
             }
-  
+
             const payload = payloadMap.get(tableId);
-  
+
             if (entitySpecs.fields[key].key) {
               payload._keys.push({ [key]: fieldValue });
             }
-  
+
             payload._data[key] = fieldValue;
             payload._schema[key] = { type: dataType };
           }
         }
       }
     }
-  
+
     return payloadMap;
   }
 
@@ -92,8 +83,8 @@ export default class WriteQueryController {
         field.tables.filter(
           table =>
             table.tableId === modelName
-                        &&
-                        table.columnName === '_id'
+            &&
+            table.columnName === '_id'
         )
     );
     if (fieldSpec) {
@@ -132,18 +123,27 @@ export default class WriteQueryController {
      * @param {Array<Object>} _payload - An array of payload objects to write to the database.
      * @returns {number} The count of successful write operations.
      */
-  async writes(_payload) {
-    if (_payload.length === 0) {
-      removeModels();
-      return 0
+  async writes(_payloads) {
+    while (_payloads.length > 0) {
+      const { _modelName: modelName, _schema: schema, _keys: keys, _data: data, entity } = _payloads.pop();
+  
+      // Ensure the model exists, or create a new one if it doesn't
+      const Model = mongoose.models[modelName] || mongoose.model(modelName, new mongoose.Schema(schema));
+  
+      // Configure options for findOneAndUpdate
+      const options = { upsert: true, new: true, setDefaultsOnInsert: true };
+  
+      // Perform the update operation
+      const result = await Model.findOneAndUpdate(this.processCondition(keys), data, options);
+  
+      // Handle any post-save operations
+      this.afterSave(result, entity, modelName);
     }
-    const payload = _payload.pop();
-    const _model = mongoose.models[payload._modelName] || this._dataBaseConnection.model(payload._modelName, new mongoose.Schema(payload._schema));
-    const options = { upsert: true, new: true, setDefaultsOnInsert: true };
-    const result = await _model.findOneAndUpdate(this.processCondition(payload._keys), payload._data, options);
-    this.afterSave(result, payload.entity, payload._modelName)
-    return await this.writes(_payload);
+    removeModels();
+    // Return a value indicating the operation is done
+    return 0;
   }
+  
 
   /**
      * Writes entities to the database by processing and executing write operations.
@@ -152,6 +152,6 @@ export default class WriteQueryController {
      */
   async write(entities) {
     const _payload = this.processData(entities);
-    return await this.writes(Array.from(_payload.values()));
+    return this.writes(Array.from(_payload.values()));
   }
 }
